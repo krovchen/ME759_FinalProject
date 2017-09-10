@@ -27,7 +27,7 @@ int main(void) {
 }	
 
 	printf("%c\r\n", '.');
-	printf("\r\n");
+	//printf("\r\n");
 
 
 	return 0;
