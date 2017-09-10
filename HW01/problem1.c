@@ -21,8 +21,8 @@ int main(void) {
 	}
 	//printf("%c \n", i);
 	printf("Hello! I'm student ");
-	
-	for(int j = 5; j > 1; j--){
+	int j = 5;
+	for(j = 5; j > 1; j--){
 		printf("%c", fullID[i-j]);
 }	
 
