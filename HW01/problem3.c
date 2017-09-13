@@ -11,6 +11,8 @@ int main(){
 	*p = 10;
 	c = (char)1;
 	
+	sprintf(sizeof(p));
+	
 	p = arr;
 	*(p+1) = 5;
 	p[0] = d;
