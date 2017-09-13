@@ -11,7 +11,7 @@ int main(){
 	*p = 10;
 	c = (char)1;
 	
-	sprintf(sizeof(p));
+	printf("The size of integer is %lu\n", (unsigned long)sizeof(n));
 	
 	p = arr;
 	*(p+1) = 5;
