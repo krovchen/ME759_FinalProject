@@ -10,6 +10,7 @@ int main(){
 	p = &d;
 	*p = 10;
 	c = (char)1;
+
 	
 	p = arr;
 	*(p+1) = 5;
