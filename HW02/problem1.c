@@ -45,11 +45,11 @@ int main(int argc, char **argv) {
 
 	bubSort(list2sort, numInts);
 	for(i = 0; i < numInts; i++){
-		printf("%d \n", list2sort[i]);
-		//fprintf(myOut, "%d \n", list2sort[i]);
+		//printf("%d \n", list2sort[i]);
+		fprintf(myOut, "%d \n", list2sort[i]);
 	}
-	//fclose(myOut);
-	//fclose(myin);
+	fclose(myOut);
+	fclose(myin);
 	return 0;
 }
 
