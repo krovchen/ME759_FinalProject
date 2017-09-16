@@ -15,8 +15,8 @@ int main(int argc, char **argv) {
 	FILE *myOut = fopen("problem1.out", "w");
 	FILE *myin;
 
-	printf("%d \n", argc);
-	printf("%d \n", atoi(argv[1]));
+	//printf("%d \n", argc);
+	//printf("%d \n", atoi(argv[1]));
 
 	if(argc == 1){
 	//if no input given not defined then do this
@@ -48,8 +48,8 @@ int main(int argc, char **argv) {
 		//printf("%d \n", list2sort[i]);
 		fprintf(myOut, "%d \n", list2sort[i]);
 	}
-	fclose(myOut);
-	fclose(myin);
+	//fclose(myOut);
+	//fclose(myin);
 	return 0;
 }
 
