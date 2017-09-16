@@ -15,6 +15,9 @@ int main(int argc, char **argv) {
 	FILE *myOut = fopen("problem1.out", "w");
 	FILE *myin;
 
+	printf("%d \n", argc);
+	printf("%d \n", atoi(argv[1]));
+
 	if(argc == 1){
 	//if no input given not defined then do this
 		myin = fopen("problem1.in", "r");
