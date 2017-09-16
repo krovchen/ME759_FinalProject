@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
 		srand(0);
 		numInts = atoi(argv[1]);
 		for(i = 0; i < numInts; i++){
-			list2sort[i] = rand() % 50;
+			list2sort[i] = rand();
 			//printf("%d \n", list2sort[i]);
 		}
 	}
