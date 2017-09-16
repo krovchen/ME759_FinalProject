@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
 	int numInts;
 	int i = 0;
 	
-	int *arrp = list2sort;
+	
 	FILE *myOut = fopen("problem1.out", "w");
 	FILE *myin;
 
@@ -23,6 +23,7 @@ int main(int argc, char **argv) {
 		myin = fopen("problem1.in", "r");
 		fscanf(myin, "%d", &numInts);
 		int list2sort[numInts];
+		int *arrp = list2sort;
 		for(i = 0; i < numInts; i++){
 			fscanf(myin, "%d", arrp);
 			//printf("%d \n", list2sort[i]);
