@@ -10,7 +10,7 @@ int main(int argc, char **argv) {
 	
 	int numInts;
 	int i = 0;
-	int list2sort[numInts];
+	
 	int *arrp = list2sort;
 	FILE *myOut = fopen("problem1.out", "w");
 	FILE *myin;
@@ -22,6 +22,7 @@ int main(int argc, char **argv) {
 	//if no input given not defined then do this
 		myin = fopen("problem1.in", "r");
 		fscanf(myin, "%d", &numInts);
+		int list2sort[numInts];
 		for(i = 0; i < numInts; i++){
 			fscanf(myin, "%d", arrp);
 			//printf("%d \n", list2sort[i]);
@@ -32,6 +33,7 @@ int main(int argc, char **argv) {
 		
 		srand(0);
 		numInts = atoi(argv[1]);
+		int list2sort[numInts];
 		for(i = 0; i < numInts; i++){
 			list2sort[i] = rand();
 			//printf("%d \n", list2sort[i]);
