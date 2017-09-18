@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+
 int main(int argc, char **argv) {
 
 
@@ -23,6 +24,7 @@ int main(int argc, char **argv) {
 		
 		//fstr = ["problem1_" itoa(i) ".out"];
 		myin = fopen(fstr, "w");
+		fprintf(myin, "%d \n", 1<<i);
 		for(j = 0; j < numInts; j++){
 			fprintf(myin, "%d \n", rand());
 		}
