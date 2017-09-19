@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
 	FILE *myTimeFile = fopen("problem1c.out", "w");
 	fprintf(myTimeFile, "%s\n", "---- bub sort timing ----");
 	printf("%s\n", "---- bub sort timing ----");
-	for(i = 10; i < 20; i++){	
+	for(ab = 10; ab < 20; i++){	
 	//if no input given not defined then do this
 		myin = fopen(fstr, "r");
 		fscanf(myin, "%d", &numInts);
@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
 	fprintf(myTimeFile, "%s\n", "---- qsort timing ----");
 	printf("%s\n", "---- qsort timing ----");
 	fstr[10] = '0';
-	for(i = 10; i < 20; i++){
+	for(ab = 10; ab < 20; i++){
 		myin = fopen(fstr, "r");
 		fscanf(myin, "%d", &numInts);
 
@@ -70,6 +70,7 @@ int main(int argc, char **argv) {
 		printf("%d \t", numInts);
 		printf("%lf \n", qs_time*1000);
 		fclose(myin);
+		fstr[10] = fstr[10]+1;
 	}
 	return 0;
 }
