@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
 	}
 	fprintf(myTimeFile, "%s\n", "---- qsort timing ----");
 	printf("%s\n", "---- qsort timing ----");
-	fstr[] = "problem1_10.in";
+	fstr = "problem1_10.in";
 	for(i = 10; i < 20; i++){
 		myin = fopen(fstr, "r");
 		fscanf(myin, "%d", &numInts);
