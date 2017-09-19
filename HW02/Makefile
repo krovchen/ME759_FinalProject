@@ -21,15 +21,24 @@ debug : LDFLAGS := -fsanitize=address
 debug : ARCH :=
 debug : $(EXEC)
 
-all : Makefile $(EXEC)
+all : problem1a problem1b problem1c problem3a problem3b
 
-%.o : %.c Makefile
-	@ echo Compiling $<...
-	$(CC) $(CCSTD) $(WFLAGS) $(OPT) $(ARCH) $(CFLAGS) -c $< -o $@
+problem1a : problem1a.c
+	gcc -o3 problem1a.c -o problem1a.exe
 
-%.o : %.cpp Makefile
-	@ echo Compiling $<...
-	$(CXX) $(CXXSTD) $(WFLAGS) $(OPT) $(ARCH) $(CXXFLAGS) -c $< -o $@
+problem1b : problem1b.c
+	gcc -o3 problem1b.c -o problem1b.exe
+
+problem1c : problem1c.c
+	gcc -o3 problem1c.c -o problem1c.exe
+
+problem3a : problem3a.c
+	gcc -o3 problem3a.c -o problem3a.exe
+
+problem3b : problem3b.c
+	gcc -o3 problem3b.c -o problem3b.exe
+
+
 
 # TODO: add targets for building executables
 
