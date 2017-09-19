@@ -44,10 +44,12 @@ int main(int argc, char **argv) {
 		printf("%d \t", numInts);
 		printf("%lf \n", bub_time*1000);
 		fclose(myin);
+		fstr[10] = fstr[10]+1;
 
 	}
 	fprintf(myTimeFile, "%s\n", "---- qsort timing ----");
 	printf("%s\n", "---- qsort timing ----");
+	fstr[] = "problem1_10.in";
 	for(i = 10; i < 20; i++){
 		myin = fopen(fstr, "r");
 		fscanf(myin, "%d", &numInts);
