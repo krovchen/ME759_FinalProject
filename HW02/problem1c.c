@@ -57,15 +57,15 @@ int main(int argc, char **argv) {
 		myin = fopen(fstr, "r");
 		fscanf(myin, "%d", &numInts);
 
-		int list2sort[numInts];
+		int list2sort_q[numInts];
 
-		int *arrp = list2sort;
+		int *arrp = list2sort_q;
 		for(i = 0; i < numInts; i++){
 			fscanf(myin, "%d", arrp);
 			arrp = arrp+1;
 		}	
 		start = clock();
-		qsort(list2sort, numInts, sizeof(int), compfun);
+		qsort(list2sort_q, numInts, sizeof(int), compfun);
 		end = clock();
 		qs_time = ((double)(end-start)) / CLOCKS_PER_SEC;
 		fprintf(myTimeFile, "%d \n", numInts);
