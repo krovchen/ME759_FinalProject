@@ -3,8 +3,6 @@
 #include <time.h>
 
 
-
-void bubSort(int inArr[], int size);
 int compfun(const void *a, const void *b);
 
 int main(int argc, char **argv) {
@@ -71,22 +69,7 @@ int main(int argc, char **argv) {
 	return 0;
 }
 
-void bubSort(int inArr[], int size){
 
-	int i;
-	int j;
-	int temp;
-	for(i = 0; i < size-1; i++){
-		for(j = 0; j < size-1-i; j++){
-			if(inArr[j] > inArr[j+1]){
-				temp = inArr[j+1];
-				inArr[j+1] = inArr[j];
-				inArr[j] = temp;
-			}
-		}
-	}
-
-}
 
 int compfun(const void *a, const void *b){
 	return (*(int*)a - *(int*)b);

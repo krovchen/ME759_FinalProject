@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 
 void bubSort(int inArr[], int size);
@@ -10,7 +11,8 @@ int main(int argc, char **argv) {
 	
 	int numInts;
 	int i = 0;
-	
+	clock_t start, end;
+	double cpu_time;
 	
 	
 	FILE *myOut = fopen("problem1.out", "w");
@@ -48,8 +50,11 @@ int main(int argc, char **argv) {
 			//printf("%d \n", list2sort[i]);
 		}
 	}
-
+	start = clock();
 	bubSort(list2sort, numInts);
+	end = clock();
+	cpu_time = ((double)(end-start)) / CLOCKS_PER_SEC;
+
 	for(i = 0; i < numInts; i++){
 		//printf("%d \n", list2sort[i]);
 		fprintf(myOut, "%d \n", list2sort[i]);
