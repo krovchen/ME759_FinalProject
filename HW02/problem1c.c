@@ -12,6 +12,7 @@ int main(int argc, char **argv) {
 	
 	int numInts;
 	int i = 0;
+	int ab = 0;
 	clock_t start, end;
 	double bub_time;
 	double qs_time;
