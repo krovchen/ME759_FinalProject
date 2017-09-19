@@ -21,6 +21,39 @@ int main(int argc, char **argv) {
 	
 	FILE *myin;
 	FILE *myTimeFile = fopen("problem1c.out", "w");
+
+
+	fprintf(myTimeFile, "%s\n", "---- qsort timing ----");
+	printf("%s\n", "---- qsort timing ----");
+	for(ab = 10; ab < 20; ab++){
+	
+		myin = fopen(fstr, "r");
+		fscanf(myin, "%d", &numInts);
+
+		int list2sort_q[numInts];
+
+		int *arrp1 = list2sort_q;
+		for(i = 0; i < numInts; i++){
+			fscanf(myin, "%d", arrp1);
+			arrp1 = arrp1+1;
+		}	
+		start = clock();
+		qsort(list2sort_q, numInts, sizeof(int), compfun);
+		end = clock();
+		qs_time = ((double)(end-start)) / CLOCKS_PER_SEC;
+		fprintf(myTimeFile, "%d \n", numInts);
+		fprintf(myTimeFile, "%lf \n", qs_time*1000);
+		printf("%d \t", numInts);
+		printf("%lf \n", qs_time*1000);
+		fclose(myin);
+		fstr[10] = fstr[10]+1;
+	}
+
+
+
+
+
+	fstr[10] = '0';
 	fprintf(myTimeFile, "%s\n", "---- bub sort timing ----");
 	printf("%s\n", "---- bub sort timing ----");
 	for(ab = 10; ab < 20; ab++){	
@@ -49,32 +82,7 @@ int main(int argc, char **argv) {
 		fstr[10] = fstr[10]+1;
 
 	}
-	fprintf(myTimeFile, "%s\n", "---- qsort timing ----");
-	printf("%s\n", "---- qsort timing ----");
-	fstr[10] = '0';
-	for(ab = 10; ab < 20; ab++){
-	
-		myin = fopen(fstr, "r");
-		fscanf(myin, "%d", &numInts);
 
-		int list2sort_q[numInts];
-
-		int *arrp = list2sort_q;
-		for(i = 0; i < numInts; i++){
-			fscanf(myin, "%d", arrp);
-			arrp = arrp+1;
-		}	
-		start = clock();
-		qsort(list2sort_q, numInts, sizeof(int), compfun);
-		end = clock();
-		qs_time = ((double)(end-start)) / CLOCKS_PER_SEC;
-		fprintf(myTimeFile, "%d \n", numInts);
-		fprintf(myTimeFile, "%lf \n", qs_time*1000);
-		printf("%d \t", numInts);
-		printf("%lf \n", qs_time*1000);
-		fclose(myin);
-		fstr[10] = fstr[10]+1;
-	}
 	return 0;
 }
 
