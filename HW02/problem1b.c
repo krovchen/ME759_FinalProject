@@ -19,8 +19,6 @@ int main(int argc, char **argv) {
 	FILE *myin;
 	FILE *myTime = fopen("problem1b.out", "w");
 
-	//printf("%d \n", argc);
-	//printf("%d \n", atoi(argv[1]));
 
 	if(argc == 1){
 	//if no input given not defined then do this
@@ -37,18 +35,17 @@ int main(int argc, char **argv) {
 
 	int list2sort[numInts];
 	if(argc == 1){
+	//if argc == 1 (meaning there are no arguments) read file and populate array
 		int *arrp = list2sort;
 		for(i = 0; i < numInts; i++){
 			fscanf(myin, "%d", arrp);
-			//printf("%d \n", list2sort[i]);
 			arrp = arrp+1;
 		}	
 	}
 	else{
-	
+	//numints set by program so generate that many random numbers
 		for(i = 0; i < numInts; i++){
 			list2sort[i] = rand();
-			//printf("%d \n", list2sort[i]);
 		}
 	}
 	start = clock();
@@ -72,6 +69,7 @@ int main(int argc, char **argv) {
 
 
 int compfun(const void *a, const void *b){
+	//followed qsort tutorial to generate some generic comparison function to use to compare 2 values
 	return (*(int*)a - *(int*)b);
 }
 

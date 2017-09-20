@@ -16,13 +16,14 @@ int main(int argc, char **argv) {
 	clock_t start, end;
 	double bub_time;
 	double qs_time;
+	//name of file to read
 	char fstr[] = "problem1_10.in";
 	
 	
 	FILE *myin;
 	FILE *myTimeFile = fopen("problem1c.out", "w");
 
-
+	//this will scan in the array and run qsort and time it
 	fprintf(myTimeFile, "%s\n", "---- qsort timing ----");
 	printf("%s\n", "---- qsort timing ----");
 	for(ab = 10; ab < 20; ab++){
@@ -46,13 +47,16 @@ int main(int argc, char **argv) {
 		printf("%d \t", numInts);
 		printf("%lf \n", qs_time*1000);
 		fclose(myin);
+		//this iterates through the filename, making problem1_10.in to problem1_11.in and so on
 		fstr[10] = fstr[10]+1;
 	}
 
 
 
 
-
+	//this will scan in the array, run bub sort and time it
+	
+	//this line resets the filename to problem1_10.in 
 	fstr[10] = '0';
 	fprintf(myTimeFile, "%s\n", "---- bub sort timing ----");
 	printf("%s\n", "---- bub sort timing ----");

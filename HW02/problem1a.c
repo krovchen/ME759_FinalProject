@@ -14,13 +14,11 @@ int main(int argc, char **argv) {
 	clock_t start, end;
 	double cpu_time;
 	
-	
+	//define files
 	FILE *myOut = fopen("problem1.out", "w");
 	FILE *myin;
 	FILE *myTime = fopen("problem1a.out", "w");
 
-	//printf("%d \n", argc);
-	//printf("%d \n", atoi(argv[1]));
 
 	if(argc == 1){
 	//if no input given not defined then do this
@@ -37,18 +35,17 @@ int main(int argc, char **argv) {
 
 	int list2sort[numInts];
 	if(argc == 1){
+		//if argc == 1 (meaning there are no arguments) read file and populate array
 		int *arrp = list2sort;
 		for(i = 0; i < numInts; i++){
 			fscanf(myin, "%d", arrp);
-			//printf("%d \n", list2sort[i]);
 			arrp = arrp+1;
 		}	
 	}
 	else{
-	
+		//numints set by program so generate that many random numbers
 		for(i = 0; i < numInts; i++){
 			list2sort[i] = rand();
-			//printf("%d \n", list2sort[i]);
 		}
 	}
 	start = clock();
@@ -74,6 +71,7 @@ void bubSort(int inArr[], int size){
 	int i;
 	int j;
 	int temp;
+	//for each iteration of outer loop, the largest unsorted number will be pushed back to the end of the array until everything is in order
 	for(i = 0; i < size-1; i++){
 		for(j = 0; j < size-1-i; j++){
 			if(inArr[j] > inArr[j+1]){
