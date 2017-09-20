@@ -75,7 +75,8 @@ int main() {
 	free(mymat);
 	fclose(myOut);
 	fclose(myIn);
-
+	outmat = NULL;
+	mymat = NULL;
 	return 0;	
 }
 
