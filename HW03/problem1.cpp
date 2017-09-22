@@ -7,7 +7,7 @@
 using namespace std;
 
 #define NSTART 8
-#define NEND 14
+#define NEND 13
 
 void write2file(double *arr, ofstream& myFile);
 
