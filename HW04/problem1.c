@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
 	//printf("the answer is: %lf\n", result);
 	printf("%d\n", num_th);
 	printf("%.2g\n", end_time-start_time);
-	printf("%s\n", unameData.sysname);
+	printf("%s %s %s %s\n", unameData.sysname, unameData.nodename, unameData.version, unameData.machine);
 	printf("%lf\n", result);
 	
 
