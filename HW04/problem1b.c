@@ -21,34 +21,46 @@ int main(int argc, char **argv) {
 	
 
 	start_time = omp_get_wtime();
-	threadVal = 17*(f_out(0) + f_out(100));
+	threadVal = h/48*17*(f_out(0) + f_out(100));
 	*pointResult = *pointResult+threadVal;
 	
-	threadVal = 59*(f_out(h)+f_out(100-h));
+	threadVal = h/48*59*(f_out(h)+f_out(100-h));
 	*pointResult = *pointResult+threadVal;
 
-	threadVal = 43*(f_out(h+h)+f_out(100-h-h));
+	threadVal = h/48*43*(f_out(h+h)+f_out(100-h-h));
 	*pointResult = *pointResult+threadVal;
 
-	threadVal = 49*(f_out(h+h+h)+f_out(100-h-h-h));
+	threadVal = h/48*49*(f_out(h+h+h)+f_out(100-h-h-h));
 	*pointResult = *pointResult+threadVal;
+
+	int ix = 0;
+	int nx = n-3;
 	#pragma omp parallel num_threads(num_th) private(threadVal)
 	{
-	printf("num threads: %d \n", omp_get_num_threads());
+		#pragma omp single
+		{
+		printf("num threads: %d \n", omp_get_num_threads());
+		}
+	
+		#pragma omp for private(i)
+		//{
+			for(ix = 0; ix < nx; ix++)
+			{
+				i = ix+4;
+				threadVal = h*f_out(i*h);
+				#pragma omp critical
+				{
+					*pointResult = *pointResult+threadVal;
+				}
+	
 
+			}
 	
-	for(i = 4; i < n-3; i++)
-	{
-		threadVal = 48*f_out(i*h);
-		*pointResult = *pointResult+threadVal;
-	
-
+		//}
 	}
-	
-	}
-	result = result*h/48;
+	//result = result*h/48;
 	printf("wall clock time: %.2g\n", omp_get_wtime()-start_time);
-	printf("the answer is: %lf\n", result);
+	printf("the answer is: %lf\n", *pointResult);
 	
 
 	return 0;
@@ -57,7 +69,7 @@ int main(int argc, char **argv) {
 
 double f_out(double x){
 
-	double sinx, cosx, espx;
+	/*double sinx, cosx, espx;
 	
 	#pragma omp parallel sections
 	{
@@ -73,9 +85,9 @@ double f_out(double x){
 		}			
 
 	}
-	
+	*/
 	//return 1.00;
-	return espx*cosx;
+	return exp(sin(x))*cos(x/40);
 
 }
 
