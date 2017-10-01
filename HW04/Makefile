@@ -21,13 +21,12 @@ debug : LDFLAGS := -fsanitize=address
 debug : ARCH :=
 debug : $(EXEC)
 
-all : problem1a problem1b
+all : problem1
 
-problem1a : problem1a.c
-	gcc -o3 problem1a.c -o problem1a.exe -fopenmp -lm
+problem1 : problem1.c
+	gcc -o3 problem1.c -o problem1.exe -fopenmp -lm
 
-problem1b : problem1b.c
-	gcc -o3 problem1b.c -o problem1b.exe -fopenmp -lm 
+
 
 
 
