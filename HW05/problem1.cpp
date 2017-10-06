@@ -3,7 +3,7 @@
 #include <vector>
 #include <omp.h>
 #include "math.h"
-#include <chrono>
+#include <time.h>
 
 using namespace std;
 
@@ -16,6 +16,8 @@ int main(int argc, char *argv[]) {
 	size_t size = nrows*ncols;
 	int i;
 	int temp;
+	int j;
+	float mintime = 100000000;
 
 
 	int ncounts[7] = {0,0,0,0,0,0, 0};
@@ -42,11 +44,13 @@ int main(int argc, char *argv[]) {
 		in_vec[i] =temp;
 
 	}
+	for(j = 0; j < 10; j++)
+{
 
-	auto t1 = std::chrono::high_resolution_clock::now();
+	clock_t t1 = clock();
 
 	#pragma omp parallel num_threads(nthreads) 
-{
+	{
 	#pragma omp for reduction(+:num0, num1, num2, num3, num4, num5, num6)
 	
 	
@@ -62,8 +66,14 @@ int main(int argc, char *argv[]) {
 			if(in_vec[i] == 6) num6++;
 		}
 	
+	}
+	clock_t t2 = clock();
+	mintime = min(float(t2-t1), mintime);
+	//cout << float(t2-t1)/CLOCKS_PER_SEC*1000 << endl;
+	//cout << mintime << endl;
 }
-	auto t2 = std::chrono::high_resolution_clock::now();
+
+	
 
 	cout << num0 << endl;
 	cout << num1 << endl;
@@ -74,7 +84,7 @@ int main(int argc, char *argv[]) {
 	cout << num6 << endl;
 	cout << num0+num1+num2+num3+num4+num5+num6 << endl;
 	cout << size << endl;
-	cout << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << endl;
+	cout << mintime/CLOCKS_PER_SEC*1000 << endl;
 
 
 }
