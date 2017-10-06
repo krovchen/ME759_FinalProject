@@ -92,6 +92,8 @@ int main(int argc, char *argv[]) {
 	cout << num6 << endl;
 	cout << num0+num1+num2+num3+num4+num5+num6 << endl;
 	cout << size << endl;
+	cout << "clocks/sec " << CLOCKS_PER_SEC << endl;
+	cout << "mintime " << mintime << endl;
 	cout << mintime/CLOCKS_PER_SEC*1000 << endl;
 
 
