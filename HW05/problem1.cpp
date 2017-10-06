@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
 	size_t size = nrows*ncols;
 	int i;
 	int temp;
-	int j;
+	int j=0;
 	float mintime;
 
 
@@ -45,7 +45,14 @@ int main(int argc, char *argv[]) {
 
 	}
 	for(j = 0; j < 10; j++)
-{
+	{
+	num0=0;
+	num1=0;
+	num2=0;
+	num3=0;
+	num4=0;
+	num5=0;
+	num6=0;
 
 	clock_t t1 = clock();
 
