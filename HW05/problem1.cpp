@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
 	int i;
 	int temp;
 	int j;
-	float mintime = 100000000;
+	float mintime;
 
 
 	int ncounts[7] = {0,0,0,0,0,0, 0};
@@ -68,7 +68,8 @@ int main(int argc, char *argv[]) {
 	
 	}
 	clock_t t2 = clock();
-	mintime = min(float(t2-t1), mintime);
+	if(j == 0) mintime = float(t2-t1);
+	else mintime = min(float(t2-t1), mintime);
 	//cout << float(t2-t1)/CLOCKS_PER_SEC*1000 << endl;
 	//cout << mintime << endl;
 }
