@@ -3,7 +3,7 @@
 #include <vector>
 #include <omp.h>
 #include "math.h"
-#include <time.h>
+#include <chrono>
 
 using namespace std;
 
@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
 	int i;
 	int temp;
 	int j=0;
-	float mintime;
+	double mintime;
 
 
 	int ncounts[7] = {0,0,0,0,0,0, 0};
@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
 	num5=0;
 	num6=0;
 
-	clock_t t1 = clock();
+	auto t1 = std::chrono::high_resolution_clock::now();
 
 	#pragma omp parallel num_threads(nthreads) 
 	{
@@ -74,10 +74,10 @@ int main(int argc, char *argv[]) {
 		}
 	
 	}
-	clock_t t2 = clock();
-	if(j == 0) mintime = float(t2-t1);
-	else mintime = min(float(t2-t1), mintime);
-	cout << float(t2-t1)/CLOCKS_PER_SEC*1000 << endl;
+	auto t2 = std::chrono::high_resolution_clock::now();
+	if(j == 0) mintime =  std::chrono::duration_cast<std::chrono::microseconds>(t2-t1).count()/1000.0;
+	else mintime = min((std::chrono::duration_cast<std::chrono::microseconds>(t2-t1).count())/1000.0, mintime);
+	//cout << std::chrono::duration_cast<std::chrono::milliseconds>(end-begin).count(); << endl;
 	//cout << mintime << endl;
 }
 
@@ -90,11 +90,10 @@ int main(int argc, char *argv[]) {
 	cout << num4 << endl;
 	cout << num5 << endl;
 	cout << num6 << endl;
-	cout << num0+num1+num2+num3+num4+num5+num6 << endl;
-	cout << size << endl;
-	cout << "clocks/sec " << CLOCKS_PER_SEC << endl;
-	cout << "mintime " << mintime << endl;
-	cout << mintime/CLOCKS_PER_SEC*1000 << endl;
+	//cout << num0+num1+num2+num3+num4+num5+num6 << endl;
+	//cout << size << endl;
+	cout << nthreads << endl;
+	cout << mintime << endl;
 
 
 }
