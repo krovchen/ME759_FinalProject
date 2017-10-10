@@ -21,11 +21,14 @@ debug : OPT  := -O0 -g -fno-omit-frame-pointer -fsanitize=address
 debug : LDFLAGS := -fsanitize=address
 debug : $(EXEC)
 
-all : problem1
+all : problem1 problem2
 
 problem1 : problem1.cpp
 	g++ problem1.cpp -std=c++14 -o problem1.exe -fopenmp -O3
 
+
+problem2 : problem2.cpp
+	g++ problem2.cpp -std=c++14 -o problem2.exe -fopenmp -O3 -lm  -mavx2
 
 .PHONY: clean
 clean:
