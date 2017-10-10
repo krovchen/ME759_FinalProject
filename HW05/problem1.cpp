@@ -94,6 +94,7 @@ int main(int argc, char *argv[]) {
 	//cout << size << endl;
 	cout << nthreads << endl;
 	cout << mintime << endl;
+	//random comment
 
 
 }
