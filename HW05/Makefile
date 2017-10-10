@@ -21,7 +21,7 @@ debug : OPT  := -O0 -g -fno-omit-frame-pointer -fsanitize=address
 debug : LDFLAGS := -fsanitize=address
 debug : $(EXEC)
 
-all : problem1 problem2 asdfasdf
+all : problem1 problem2
 
 problem1 : problem1.cpp
 	g++ problem1.cpp -std=c++14 -o problem1.exe -fopenmp -O3
