@@ -6,8 +6,8 @@ using namespace std;
 
 __global__ void addKernel(double* arrA, double* arrB, double* arrC, int N){
 	int thid = threadIdx.x+blockIdx.x*blockDim.x;
-	//if(thid < N)
-	arrC[thid] += threadIdx.x; //arrA[thid]; //+arrB[thid];
+	if(thid < N)
+	arrC[thid] += arrA[thid]+arrB[thid];
 }
 
 
@@ -96,7 +96,7 @@ int main( int argc, char *argv[])
 	int count=0;
 	for(int i=0;i<N;i++)
 	{
-		cout << hC[i]  << "\n";
+		//cout << hC[i]  << "\n";
 		//cout << hA[i] << "\n";
 		if(hC[i]!=hA[i]) //refC[i])
 		{
