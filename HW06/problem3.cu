@@ -98,7 +98,7 @@ int main( int argc, char *argv[])
 	{
 		//cout << hC[i]  << "\n";
 		//cout << hA[i] << "\n";
-		if(hC[i]!=hA[i]) //refC[i])
+		if(hC[i]!=refC[i])
 		{
 			count++;
 		}
