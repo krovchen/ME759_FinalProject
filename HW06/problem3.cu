@@ -71,6 +71,9 @@ int main( int argc, char *argv[])
 	cudaMemcpy(&dB, hB, sizeof(double)*N, cudaMemcpyHostToDevice);
 	cudaMalloc((void**)&dC, sizeof(double)*N);
 	cudaMemset(dC, 1, sizeof(double)*N);
+
+	cudaMemcpy(&hC, dC, sizeof(double)*N, cudaMemcpyDeviceToHost);
+	cout << "first value of host array after copying back dC is: " << hC[0] << "\n";
 	
 	cout << "alocated memory" << "\n";
 	cudaEventRecord(startEvent_exc,0); // staring timing for exclusive
