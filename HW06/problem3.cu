@@ -65,6 +65,7 @@ int main( int argc, char *argv[])
 	cout << "starting cuda stuff" << "\n";
 	cudaEventRecord(startEvent_inc,0); // starting timing for inclusive
 	// TODO allocate memory for arrays and copay array A and B
+	cout << "dA allocated \n";
 	cudaMalloc((void**)&dA, sizeof(double)*N);
 	cudaMemcpy(&dA, hA, sizeof(double)*N, cudaMemcpyHostToDevice);
 	cudaMalloc((void**)&dB, sizeof(double)*N);
