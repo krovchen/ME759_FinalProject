@@ -20,6 +20,8 @@ int main( int argc, char *argv[])
 		return 0;
 	}
 
+	cout << "HEre we go!" << "\n";
+
 	FILE *fpA,*fpB;
 	int N = atoi(argv[1]);
 	int M = atoi(argv[2]); 
