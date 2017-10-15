@@ -59,7 +59,7 @@ int main( int argc, char *argv[])
       for(int i=0;i<N;i++)
         refC[i]=hA[i]+hB[i];
 
-
+	cout << "starting cuda stuff" << endl;
 	cudaEventRecord(startEvent_inc,0); // starting timing for inclusive
 	// TODO allocate memory for arrays and copay array A and B
 	cudaMalloc((void**)&dA, sizeof(double)*N);
@@ -69,11 +69,12 @@ int main( int argc, char *argv[])
 	cudaMalloc((void**)&dC, sizeof(double)*N);
 	//cudaMemset(dB, 0, sizeof(double)*N);
 	
-
+	cout << "alocated memory" << endl;
 	cudaEventRecord(startEvent_exc,0); // staring timing for exclusive
 
 	addKernel<<<nBlocks, M>>>(dA, dB, dC, N);
 
+	cout << "ran kernel" << endl;
 	cudaEventRecord(stopEvent_exc,0);  // ending timing for exclusive
 	cudaEventSynchronize(stopEvent_exc);   
 	cudaEventElapsedTime(&elapsedTime_exc, startEvent_exc, stopEvent_exc);
@@ -81,7 +82,7 @@ int main( int argc, char *argv[])
 	// TODO copy data back
 	cudaMemcpy(&hC, dC, sizeof(double)*N, cudaMemcpyDeviceToHost);
 
-
+	cout << "copied mem back" << endl;
 	cudaEventRecord(stopEvent_inc,0);  //ending timing for inclusive
 	cudaEventSynchronize(stopEvent_inc);   
 	cudaEventElapsedTime(&elapsedTime_inc, startEvent_inc, stopEvent_inc);
