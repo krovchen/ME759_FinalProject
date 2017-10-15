@@ -6,8 +6,8 @@ using namespace std;
 
 __global__ void addKernel(double* arrA, double* arrB, double* arrC, int N){
 	int thid = threadIdx.x+blockIdx.x*blockDim.x;
-	if(thid < N)
-	arrC[thid] = arrA[thid]; //+arrB[thid];
+	//if(thid < N)
+	arrC[thid] += threadIdx.x; //arrA[thid]; //+arrB[thid];
 }
 
 
@@ -70,7 +70,7 @@ int main( int argc, char *argv[])
 	cudaMalloc((void**)&dB, sizeof(double)*N);
 	cudaMemcpy(&dB, hB, sizeof(double)*N, cudaMemcpyHostToDevice);
 	cudaMalloc((void**)&dC, sizeof(double)*N);
-	//cudaMemset(dB, 0, sizeof(double)*N);
+	cudaMemset(dC, 1, sizeof(double)*N);
 	
 	cout << "alocated memory" << "\n";
 	cudaEventRecord(startEvent_exc,0); // staring timing for exclusive
@@ -97,7 +97,7 @@ int main( int argc, char *argv[])
 	for(int i=0;i<N;i++)
 	{
 		cout << hC[i]  << "\n";
-		cout << hA[i] << "\n";
+		//cout << hA[i] << "\n";
 		if(hC[i]!=hA[i]) //refC[i])
 		{
 			count++;
