@@ -7,7 +7,7 @@ using namespace std;
 __global__ void addKernel(double* arrA, double* arrB, double* arrC, int N){
 	int thid = threadIdx.x+blockIdx.x*blockDim.x;
 	if(thid < N)
-	arrC[thid] = arrA[thid]+arrB[thid];
+	arrC[thid] = arrA[thid]; //+arrB[thid];
 }
 
 
@@ -56,6 +56,7 @@ int main( int argc, char *argv[])
 	float blockRem = N/M - nBlocks;
 	if(blockRem != 0)
 	nBlocks = nBlocks+1;
+	cout << "blocks used: " << nBlocks << "\n";
 
 
       for(int i=0;i<N;i++)
@@ -95,7 +96,9 @@ int main( int argc, char *argv[])
 	int count=0;
 	for(int i=0;i<N;i++)
 	{
-		if(hC[i]!=refC[i])
+		cout << hC[i]  << "\n";
+		cout << hA[i] << "\n";
+		if(hC[i]!=hA[i]) //refC[i])
 		{
 			count++;
 		}
