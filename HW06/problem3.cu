@@ -69,9 +69,11 @@ int main( int argc, char *argv[])
 	cout << "right after record"  << "\n";
  // starting timing for inclusive
 	// TODO allocate memory for arrays and copay array A and B
-	cout << "dA allocated \n";
+	
 	cudaMalloc((void**)&dA, sizeof(double)*N);
+	cout << "dA allocated" << "\n";
 	cudaMemcpy(&dA, hA, sizeof(double)*N, cudaMemcpyHostToDevice);
+	cout << "dA copied " << "\n";
 	cudaMalloc((void**)&dB, sizeof(double)*N);
 	cudaMemcpy(&dB, hB, sizeof(double)*N, cudaMemcpyHostToDevice);
 	cudaMalloc((void**)&dC, sizeof(double)*N);
