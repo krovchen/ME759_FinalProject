@@ -63,7 +63,11 @@ int main( int argc, char *argv[])
         refC[i]=hA[i]+hB[i];
 
 	cout << "starting cuda stuff" << "\n";
-	cudaEventRecord(startEvent_inc,0); // starting timing for inclusive
+	cout << "right before record" << "\n";
+	cudaEventRecord(startEvent_inc,0);
+
+	cout << "right after record"  << "\n";
+ // starting timing for inclusive
 	// TODO allocate memory for arrays and copay array A and B
 	cout << "dA allocated \n";
 	cudaMalloc((void**)&dA, sizeof(double)*N);
