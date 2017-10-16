@@ -82,7 +82,9 @@ int main( int argc, char *argv[])
 	cout << "dC copied " << "\n";
 	//cudaMemset(dC, 1, sizeof(double)*N);
 
+	cout << "trying to copy hC to dC" << "\n";
 	cudaMemcpy(&hC, dC, sizeof(double)*N, cudaMemcpyDeviceToHost);
+	cout << "copied hC to dC " << "\n";
 	cout << "first value of host array after copying back dC is: " << hC[0] << "\n";
 	
 	cout << "alocated memory" << "\n";
