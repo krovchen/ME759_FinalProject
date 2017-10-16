@@ -128,7 +128,7 @@ int main( int argc, char *argv[])
 	cudaEventElapsedTime(&elapsedTime_inc, startEvent_inc, stopEvent_inc);
 
 
-/*
+
 	//verification
 	int count=0;
 	for(int i=0;i<N;i++)
@@ -142,7 +142,7 @@ int main( int argc, char *argv[])
 	}
 	if(count!=0) // This should never be printed in correct code
 		cout<<"Error at "<< count<<" locations\n";
-*/
+
 	cout << "time to print results: " << "\n";
 	cout<<N<<"\n";
 	cout<<M<<"\n";
