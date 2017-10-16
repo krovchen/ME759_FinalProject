@@ -75,9 +75,12 @@ int main( int argc, char *argv[])
 	cudaMemcpy(&dA, hA, sizeof(double)*N, cudaMemcpyHostToDevice);
 	cout << "dA copied " << "\n";
 	cudaMalloc((void**)&dB, sizeof(double)*N);
+	cout << "dB allocated" << "\n";
 	cudaMemcpy(&dB, hB, sizeof(double)*N, cudaMemcpyHostToDevice);
+	cout << "dB copied " << "\n";
 	cudaMalloc((void**)&dC, sizeof(double)*N);
-	cudaMemset(dC, 1, sizeof(double)*N);
+	cout << "dC copied " << "\n";
+	//cudaMemset(dC, 1, sizeof(double)*N);
 
 	cudaMemcpy(&hC, dC, sizeof(double)*N, cudaMemcpyDeviceToHost);
 	cout << "first value of host array after copying back dC is: " << hC[0] << "\n";
