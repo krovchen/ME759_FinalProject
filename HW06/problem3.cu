@@ -95,7 +95,7 @@ int main( int argc, char *argv[])
 	//cudaMemset(dC, 1, sizeof(double)*N);
 
 	cout << "trying to copy hC to dC" << "\n";
-	cudaMemcpy(&hC, dC, sizeof(double)*N, cudaMemcpyDeviceToHost);
+	cudaMemcpy(hC, dC, sizeof(double)*N, cudaMemcpyDeviceToHost);
 	cout << "N = " << N << "\n";
 	cout << "M = " << M << "\n";
 	cout << "copied hC to dC " << "\n";
