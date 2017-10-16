@@ -71,21 +71,33 @@ int main( int argc, char *argv[])
 	cout << "right after record"  << "\n";
  // starting timing for inclusive
 	// TODO allocate memory for arrays and copay array A and B
-	
+	cout << "N = " << N << "\n";
+	cout << "M = " << M << "\n";
+
 	cudaMalloc((void**)&dA, sizeof(double)*N);
 	cout << "dA allocated" << "\n";
+	cout << "N = " << N << "\n";
+	cout << "M = " << M << "\n";
 	cudaMemcpy(&dA, hA, sizeof(double)*N, cudaMemcpyHostToDevice);
 	cout << "dA copied " << "\n";
+	cout << "N = " << N << "\n";
+	cout << "M = " << M << "\n";
 	cudaMalloc((void**)&dB, sizeof(double)*N);
 	cout << "dB allocated" << "\n";
 	cudaMemcpy(&dB, hB, sizeof(double)*N, cudaMemcpyHostToDevice);
 	cout << "dB copied " << "\n";
+	cout << "N = " << N << "\n";
+	cout << "M = " << M << "\n";
 	cudaMalloc((void**)&dC, sizeof(double)*N);
 	cout << "dC copied " << "\n";
+	cout << "N = " << N << "\n";
+	cout << "M = " << M << "\n";
 	//cudaMemset(dC, 1, sizeof(double)*N);
 
 	cout << "trying to copy hC to dC" << "\n";
 	cudaMemcpy(&hC, dC, sizeof(double)*N, cudaMemcpyDeviceToHost);
+	cout << "N = " << N << "\n";
+	cout << "M = " << M << "\n";
 	cout << "copied hC to dC " << "\n";
 	//cout << "first value of host array after copying back dC is: " << hC[0] << "\n";
 	
