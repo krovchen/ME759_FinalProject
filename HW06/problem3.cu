@@ -57,6 +57,8 @@ int main( int argc, char *argv[])
 	if(blockRem != 0)
 	nBlocks = nBlocks+1;
 	cout << "blocks used: " << nBlocks << "\n";
+	cout << "N = " << N << "\n";
+	cout << "M = " << M << "\n";
 
 
       for(int i=0;i<N;i++)
@@ -90,7 +92,15 @@ int main( int argc, char *argv[])
 	cout << "alocated memory" << "\n";
 	cudaEventRecord(startEvent_exc,0); // staring timing for exclusive
 
+
+	cout << "N = " << N << "\n";
+	cout << "M = " << M << "\n";
+
 	addKernel<<<nBlocks, M>>>(dA, dB, dC, N);
+
+
+	cout << "N = " << N << "\n";
+	cout << "M = " << M << "\n";
 
 	cout << "ran kernel" << "\n";
 	cudaEventRecord(stopEvent_exc,0);  // ending timing for exclusive
