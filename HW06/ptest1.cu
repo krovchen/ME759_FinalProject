@@ -47,7 +47,7 @@ int main( int argc, char *argv[])
 
 	cout << "starting cuda stuff" << "\n";
 	cout << "right before record" << "\n";
-	cudaEventRecord(startEvent_inc,0);
+
 
 	cout << "right after record"  << "\n";
  // starting timing for inclusive
@@ -83,7 +83,7 @@ int main( int argc, char *argv[])
 	//cout << "first value of host array after copying back dC is: " << hC[0] << "\n";
 	
 	cout << "alocated memory" << "\n";
-	cudaEventRecord(startEvent_exc,0); // staring timing for exclusive
+
 
 
 	cout << "N = " << N << "\n";
