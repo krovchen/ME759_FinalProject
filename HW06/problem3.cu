@@ -7,7 +7,7 @@ using namespace std;
 __global__ void addKernel(double* arrA, double* arrB, double* arrC, int N){
 	int thid = threadIdx.x+blockIdx.x*blockDim.x;
 	if(thid < N)
-	arrC[thid] += arrA[thid]+arrB[thid];
+	arrC[thid] = arrA[thid]+arrB[thid];
 }
 
 
@@ -20,7 +20,6 @@ int main( int argc, char *argv[])
 		return 0;
 	}
 
-	cout << "HEre we go!" << "\n";
 
 	FILE *fpA,*fpB;
 	int N = atoi(argv[1]);
@@ -57,67 +56,47 @@ int main( int argc, char *argv[])
 	if(blockRem != 0)
 	nBlocks = nBlocks+1;
 	cout << "blocks used: " << nBlocks << "\n";
-	cout << "N = " << N << "\n";
-	cout << "M = " << M << "\n";
+
 
 
       for(int i=0;i<N;i++)
         refC[i]=hA[i]+hB[i];
 
-	cout << "starting cuda stuff" << "\n";
-	cout << "right before record" << "\n";
+
 	cudaEventRecord(startEvent_inc,0);
 
-	cout << "right after record"  << "\n";
+	
  // starting timing for inclusive
 	// TODO allocate memory for arrays and copay array A and B
-	cout << "N = " << N << "\n";
-	cout << "M = " << M << "\n";
+
 
 	cudaMalloc((void**)&dA, sizeof(double)*N);
-	cout << "dA allocated" << "\n";
-	cout << "N = " << N << "\n";
-	cout << "M = " << M << "\n";
+
 	cudaMemcpy(dA, hA, sizeof(double)*N, cudaMemcpyHostToDevice);
-	cout << "dA copied " << "\n";
-	cout << "N = " << N << "\n";
-	cout << "M = " << M << "\n";
+
 	cudaMalloc((void**)&dB, sizeof(double)*N);
-	cout << "dB allocated" << "\n";
+
 	cudaMemcpy(dB, hB, sizeof(double)*N, cudaMemcpyHostToDevice);
-	cout << "dB copied " << "\n";
-	cout << "N = " << N << "\n";
-	cout << "M = " << M << "\n";
+
 	cudaMalloc((void**)&dC, sizeof(double)*N);
-	cout << "dC copied " << "\n";
-	cout << "N = " << N << "\n";
-	cout << "M = " << M << "\n";
+
 	//cudaMemset(dC, 1, sizeof(double)*N);
 
-	cout << "trying to copy hC to dC" << "\n";
+
 	cudaMemcpy(hC, dC, sizeof(double)*N, cudaMemcpyDeviceToHost);
-	cout << "N = " << N << "\n";
-	cout << "M = " << M << "\n";
-	cout << "copied hC to dC " << "\n";
+
 	//cout << "first value of host array after copying back dC is: " << hC[0] << "\n";
 	
-	cout << "alocated memory" << "\n";
+
 	cudaEventRecord(startEvent_exc,0); // staring timing for exclusive
 
 
-	cout << "N = " << N << "\n";
-	cout << "M = " << M << "\n";
-	
-	cout << "last dA = " << hA[1] << "\n";
-	cout << "last dB = " << hB[1] << "\n";
 
 	addKernel<<<nBlocks, M>>>(dA, dB, dC, N);
 
 
-	cout << "N = " << N << "\n";
-	cout << "M = " << M << "\n";
 
-	cout << "ran kernel" << "\n";
+	//cout << "ran kernel" << "\n";
 	cudaEventRecord(stopEvent_exc,0);  // ending timing for exclusive
 	cudaEventSynchronize(stopEvent_exc);   
 	cudaEventElapsedTime(&elapsedTime_exc, startEvent_exc, stopEvent_exc);
@@ -127,7 +106,7 @@ int main( int argc, char *argv[])
 
 	//cout << "last dC = " << dC[1] << "\n";
 
-	cout << "copied mem back" << "\n";
+	//cout << "copied mem back" << "\n";
 	cudaEventRecord(stopEvent_inc,0);  //ending timing for inclusive
 	cudaEventSynchronize(stopEvent_inc);   
 	cudaEventElapsedTime(&elapsedTime_inc, startEvent_inc, stopEvent_inc);
