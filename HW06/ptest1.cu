@@ -105,8 +105,7 @@ int main( int argc, char *argv[])
 	cout << "time to print results: " << "\n";
 	cout<<N<<"\n";
 	cout<<M<<"\n";
-	cout <<elapsedTime_exc<<"\n";
-	cout <<elapsedTime_inc<<"\n";
+
 	cout <<hC[N-1]<<"\n";
 	//freeing memory
 	delete[] hA,hB,hC,refC;     
