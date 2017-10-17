@@ -107,6 +107,9 @@ int main( int argc, char *argv[])
 
 	cout << "N = " << N << "\n";
 	cout << "M = " << M << "\n";
+	
+	cout << "last dA = " << dA[N-1] << "\n";
+	cout << "last dB = " << dB[N-1] << "\n";
 
 	addKernel<<<nBlocks, M>>>(dA, dB, dC, N);
 
@@ -121,6 +124,8 @@ int main( int argc, char *argv[])
 
 	// TODO copy data back
 	cudaMemcpy(hC, dC, sizeof(double)*N, cudaMemcpyDeviceToHost);
+
+	cout << "last dC = " << dC[N-1] << "\n";
 
 	cout << "copied mem back" << "\n";
 	cudaEventRecord(stopEvent_inc,0);  //ending timing for inclusive
