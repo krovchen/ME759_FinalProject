@@ -30,7 +30,7 @@ problem2: problem2.cu
 	module load cuda;nvcc -o problem2 problem2.cu
 
 problem3: problem3.cu
-	module load cuda;nvcc -o problem3 $(OPT) problem3.cu -ccbin $(BIN)
+	module load cuda;nvcc -o problem3 problem3.cu -ccbin $(CU_CCBIN)
 
 test1: ptest1.cu
 	nvcc -o ptest1 ptest1.cu
