@@ -125,7 +125,7 @@ int main( int argc, char *argv[])
 	// TODO copy data back
 	cudaMemcpy(hC, dC, sizeof(double)*N, cudaMemcpyDeviceToHost);
 
-	cout << "last dC = " << dC[1] << "\n";
+	//cout << "last dC = " << dC[1] << "\n";
 
 	cout << "copied mem back" << "\n";
 	cudaEventRecord(stopEvent_inc,0);  //ending timing for inclusive
