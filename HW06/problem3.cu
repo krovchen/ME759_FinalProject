@@ -108,8 +108,8 @@ int main( int argc, char *argv[])
 	cout << "N = " << N << "\n";
 	cout << "M = " << M << "\n";
 	
-	cout << "last dA = " << dA[1] << "\n";
-	cout << "last dB = " << dB[1] << "\n";
+	cout << "last dA = " << hA[1] << "\n";
+	cout << "last dB = " << hB[1] << "\n";
 
 	addKernel<<<nBlocks, M>>>(dA, dB, dC, N);
 
