@@ -78,13 +78,13 @@ int main( int argc, char *argv[])
 	cout << "dA allocated" << "\n";
 	cout << "N = " << N << "\n";
 	cout << "M = " << M << "\n";
-	cudaMemcpy(&dA, hA, sizeof(double)*N, cudaMemcpyHostToDevice);
+	cudaMemcpy(dA, hA, sizeof(double)*N, cudaMemcpyHostToDevice);
 	cout << "dA copied " << "\n";
 	cout << "N = " << N << "\n";
 	cout << "M = " << M << "\n";
 	cudaMalloc((void**)&dB, sizeof(double)*N);
 	cout << "dB allocated" << "\n";
-	cudaMemcpy(&dB, hB, sizeof(double)*N, cudaMemcpyHostToDevice);
+	cudaMemcpy(dB, hB, sizeof(double)*N, cudaMemcpyHostToDevice);
 	cout << "dB copied " << "\n";
 	cout << "N = " << N << "\n";
 	cout << "M = " << M << "\n";
