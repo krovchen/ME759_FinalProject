@@ -7,7 +7,7 @@ using namespace std;
 __global__ void addKernel(double* arrA, double* arrB, double* arrC, int N){
 	int thid = threadIdx.x+blockIdx.x*blockDim.x;
 	if(thid < N)
-	arrC[thid] += arrA[thid]+arrB[thid];
+	arrC[thid] = threadIdx.x;
 }
 
 
@@ -22,7 +22,7 @@ int main( int argc, char *argv[])
 
 	cout << "HEre we go!" << "\n";
 
-	FILE *fpA,*fpB;
+
 	int N = atoi(argv[1]);
 	int M = atoi(argv[2]); 
 	double *hA= new double[N];
@@ -31,25 +31,6 @@ int main( int argc, char *argv[])
 	double *refC=  new double[N]; // Used to verify functional correctness
 	double *dA,*dB,*dC;  // You may use these to allocate memory on gpu
 	//defining variables for timing
-	cudaEvent_t startEvent_inc, stopEvent_inc, startEvent_exc, stopEvent_exc;
-	cudaEventCreate(&startEvent_inc);
-	cudaEventCreate(&stopEvent_inc);
-	cudaEventCreate(&startEvent_exc);
-	cudaEventCreate(&stopEvent_exc);
-	float elapsedTime_inc, elapsedTime_exc;
-
-	//reading files
-	fpA = fopen("inputA.inp", "r");
-	fpB= fopen("inputB.inp", "r");
-
-
-	for (int i=0;i<N;i++){    
-		fscanf(fpA, "%lf",&hA[i]);
-	}
-	for (int i=0;i<N;i++){
-		fscanf(fpB, "%lf",&hB[i]);
-	}
-
 
 
 	int nBlocks = N/M;
@@ -115,33 +96,11 @@ int main( int argc, char *argv[])
 	cout << "M = " << M << "\n";
 
 	cout << "ran kernel" << "\n";
-	cudaEventRecord(stopEvent_exc,0);  // ending timing for exclusive
-	cudaEventSynchronize(stopEvent_exc);   
-	cudaEventElapsedTime(&elapsedTime_exc, startEvent_exc, stopEvent_exc);
 
 	// TODO copy data back
 	cudaMemcpy(hC, dC, sizeof(double)*N, cudaMemcpyDeviceToHost);
 
-	cout << "copied mem back" << "\n";
-	cudaEventRecord(stopEvent_inc,0);  //ending timing for inclusive
-	cudaEventSynchronize(stopEvent_inc);   
-	cudaEventElapsedTime(&elapsedTime_inc, startEvent_inc, stopEvent_inc);
 
-
-
-	//verification
-	int count=0;
-	for(int i=0;i<N;i++)
-	{
-		//cout << hC[i]  << "\n";
-		//cout << hA[i] << "\n";
-		if(hC[i]!=refC[i])
-		{
-			count++;
-		}
-	}
-	if(count!=0) // This should never be printed in correct code
-		cout<<"Error at "<< count<<" locations\n";
 
 	cout << "time to print results: " << "\n";
 	cout<<N<<"\n";
