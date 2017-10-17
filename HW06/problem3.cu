@@ -55,7 +55,7 @@ int main( int argc, char *argv[])
 	float blockRem = N/M - nBlocks;
 	if(blockRem != 0)
 	nBlocks = nBlocks+1;
-	cout << "blocks used: " << nBlocks << "\n";
+	//cout << "blocks used: " << nBlocks << "\n";
 
 
 
@@ -127,7 +127,7 @@ int main( int argc, char *argv[])
 	if(count!=0) // This should never be printed in correct code
 		cout<<"Error at "<< count<<" locations\n";
 
-	cout << "time to print results: " << "\n";
+	//cout << "time to print results: " << "\n";
 	cout<<N<<"\n";
 	cout<<M<<"\n";
 	cout <<elapsedTime_exc<<"\n";
