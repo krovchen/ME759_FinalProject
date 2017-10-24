@@ -31,15 +31,32 @@ void matxvec(int *hA, int *hB, int *hC, int rowWidth, int colWidth){
 }
 
 
-__global__ void multKernel(int* dA, int* dB, int* dC, int rowWidth, int colWidth){
+__global__ void multKernel(int* dA, int* dB, int* dC, int rowWidth, const int colWidth){
 	//__shared__ int B[rowWidth];
 	//B = dB;
 	int thid = threadIdx.x+blockIdx.x*blockDim.x;
 	int locsum = 0;
-	if(thid < rowWidth*colWidth){
+
+	__shared__ int dCshare[16];
+	if(threadIdx.x == 0)
+		dCshare[blockIdx.x] = 0;
+	__syncthreads();
+	__threadfence_block();
+	if(thid <= rowWidth*colWidth){
+		//printf("%s %d\n", "dA: ", dA[thid]);
+		
 		locsum = dA[thid]*dB[threadIdx.x];
-		dC[thid] += locsum;
+
+		atomicAdd(&dCshare[blockIdx.x], locsum);
+
+		
 	}
+
+	
+	if(threadIdx.x == 0)
+		dC[blockIdx.x] = dCshare[blockIdx.x];
+	
+	
 }
 
 
@@ -49,19 +66,18 @@ int main(int argc, char *argv[]) {
 		return -1;
 	}
 
-	const int rowWidth=4;//32;
-        const int colWidth=2;//16;
-	int i = 0;	
-	int *hA = read_array("inputA1.inp",rowWidth*colWidth );
-	int *hB = read_array("inputB1.inp", rowWidth);
+	const int rowWidth=32;
+        const int colWidth=16;
+	//int i = 0;	
+	int *hA = read_array("inputA.inp",rowWidth*colWidth );
+	int *hB = read_array("inputB.inp", rowWidth);
 	int *hC = (int*) malloc(colWidth * sizeof(int));
 	int *refC = (int*) malloc(colWidth * sizeof(int));
 	// TODO - allocate host memory for refC (you have to figure out how much)
-	// The skeleton currently segfaults because refC is accessed without allocation
+	// The skeleton currently segfaults because refC is accessed without allocation++
 
 	// TODO do a reference host implementation (Ch) here. ie populate answer in refC
 	matxvec(hA, hB, refC, rowWidth, colWidth);
-
 
 
 	int *dA, *dB, *dC;
@@ -71,23 +87,25 @@ int main(int argc, char *argv[]) {
 	cudaMemcpy(dA, hA, sizeof(int)*rowWidth*colWidth, cudaMemcpyHostToDevice);
 
 	cudaMalloc((void**)&dB, sizeof(int)*rowWidth);
-	cudaMemcpy(dB, hC, sizeof(int)*rowWidth, cudaMemcpyHostToDevice);
+	cudaMemcpy(dB, hB, sizeof(int)*rowWidth, cudaMemcpyHostToDevice);
 
 	cudaMalloc((void**)&dC, sizeof(int)*colWidth);
 	cudaMemset(dC, 0, sizeof(int)*colWidth);
 
 
 	// TODO call your kernel
-	multKernel<<<colWidth, rowWidth>>>(dA, dB, dC, rowWidth, colWidth);
+	multKernel<<<16, 32, 2*sizeof(int)>>>(dA, dB, dC, rowWidth, colWidth);
 
 	// TODO copyback results
 	cudaMemcpy(hC, dC, sizeof(int)*colWidth, cudaMemcpyDeviceToHost);
+
+
 
 	float Error=0;
 
 	for(int i=0;i<colWidth;i++)
 		Error+=(hC[i]-refC[i])*(hC[i]-refC[i]);
-	printf("%f\n%d",sqrt(Error),hC[colWidth-1]);
+	printf("%f\n%d\n",sqrt(Error),hC[colWidth-1]);
 
 	free(refC);
 	free(hB);
