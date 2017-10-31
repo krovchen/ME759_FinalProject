@@ -102,10 +102,9 @@ __global__ void Muldev(double* A, double* B, double* C, int nRows)
 		__syncthreads();
 		__threadfence_block();
 		
-		for(k = 0; k < blockDim.x; ++k)
-			
-
-			Csub+=As[ty*blockDim.x+k]*Bs[k*blockDim.x+tx];
+		for(k = 0; k < blockDim.x; ++k){
+			Csub+=As[ty*blockDim.x+k]*Bs[k*blockDim.x+tx];}
+			//Csub+=As[tx*blockDim.x+k]*Bs[k*blockDim.x+ty];}
 			
 		__syncthreads();
 	}
