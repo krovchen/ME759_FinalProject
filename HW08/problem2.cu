@@ -61,9 +61,96 @@ int main( int argc, char** argv)
 
 
 
+__global__ void Muldev(double* A, double* B, double* C, int nRows)
+{
+
+	extern __shared__ double ptr[];
+
+
+	int bx = blockIdx.x;
+	int by = blockIdx.y;
+
+	int tx = threadIdx.x;
+	int ty = threadIdx.y;
+
+	int aBegin = nRows*blockDim.x*by;
+	int aEnd = aBegin + nRows-1;
+
+	int aStep = blockDim.x;
+	
+	int bBegin = blockDim.x*bx;
+	int bStep = blockDim.x*nRows;
+
+	double Csub = 0;
+	
+	double* As = &ptr[0];
+	double* Bs = &ptr[blockDim.x*blockDim.x];
+
+	
+
+	int a;
+	int b;
+	int k;
+
+	for(a = aBegin, b = bBegin; a<=aEnd; a+=aStep, b+=bStep){
+		
+		As[ty*blockDim.x+tx] = A[a+nRows*ty+tx];
+
+		Bs[ty*blockDim.x+tx] = B[b+nRows*ty+tx];
+		
+
+		__syncthreads();
+		__threadfence_block();
+		
+		for(k = 0; k < blockDim.x; ++k)
+			
+
+			Csub+=As[ty*blockDim.x+k]*Bs[k*blockDim.x+tx];
+			
+		__syncthreads();
+	}
+
+	int c = nRows*blockDim.x*by+blockDim.x*bx;
+	C[c+nRows*ty+tx] = Csub;
+		
+
+
+}
+
 void computeOnDevice(double* hA,double* hB, double* hC, int nRows, int TileSize, float* incTime)
 {
+	double* dA;
+	double* dB;
+	double* dC;
+	cudaEvent_t startEvent_inc;
+	cudaEvent_t stopEvent_inc;
+	cudaEventCreate(&startEvent_inc);
+	cudaEventCreate(&stopEvent_inc);
+
+	int size = nRows*nRows*sizeof(double);
+
+	cudaEventRecord(startEvent_inc,0);
+
+	cudaMalloc((void**)&dA, size);
+	cudaMalloc((void**)&dB, size);
+	cudaMalloc((void**)&dC, size);
+	cudaMemcpy(dA, hA, size, cudaMemcpyHostToDevice);
+	cudaMemcpy(dB, hB, size, cudaMemcpyHostToDevice);
 	
+	dim3 dimBlock(TileSize, TileSize);
+	dim3 dimGrid(nRows/TileSize, nRows/TileSize);
+
+	
+	Muldev<<<dimGrid, dimBlock, sizeof(double)*TileSize*TileSize*TileSize*TileSize>>>(dA, dB, dC, nRows);
+	cudaMemcpy(hC, dC, size, cudaMemcpyDeviceToHost);
+	cudaEventRecord(stopEvent_inc,0);  //ending timing for inclusive
+	cudaEventSynchronize(stopEvent_inc);   
+	cudaEventElapsedTime(incTime, startEvent_inc, stopEvent_inc);
+
+	cudaFree(dA);
+	cudaFree(dB);
+	cudaFree(dC);
+
 	return;//Placeholder
 }
 
