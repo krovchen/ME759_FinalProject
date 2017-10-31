@@ -44,11 +44,42 @@
 //                  result is expected in index 0 of g_idata
 //! @param n        input number of elements to scan from input data
 // **===------------------------------------------------------------------===**
-__global__ void reduction(float *g_data, int n)
-{
 
+
+__device__ void warpReduce(volatile float* sdata, int tid){
+	sdata[tid] += sdata[tid+32];
+	sdata[tid] += sdata[tid+16];
+	sdata[tid] += sdata[tid+8];
+	sdata[tid] += sdata[tid+4];
+	sdata[tid] += sdata[tid+2];
+	sdata[tid] += sdata[tid+1];
+}
+
+
+__global__ void reduction(float *g_data, int n)
+{	
+
+
+
+	extern __shared__ float sdata[];
+	unsigned int tid = threadIdx.x;
+	unsigned int i = blockIdx.x*blockDim.x+threadIdx.x;
+	sdata[tid] = g_data[i];
+	__syncthreads();
+
+	if(tid < blockDim.x/2)
+	{
+		sdata[tid] += sdata[tid+blockDim.x/2];
+	}
+
+	__syncthreads();
+
+	g_data[tid] = sdata[tid];
 
 
 }
+
+
+
 
 #endif // #ifndef _VECTOR_REDUCTION_KERNEL_H_
