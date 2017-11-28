@@ -75,6 +75,11 @@ extern "C" void computeGold( float* reference, float* idata, const unsigned int 
 ////////////////////////////////////////////////////////////////////////////////
 int main( int argc, char** argv) 
 {
+	
+
+
+
+
 	int num_elements = NUM_ELEMENTS;
 
 	float* h_data=read_array("problem2.inp",num_elements);
@@ -84,6 +89,7 @@ int main( int argc, char** argv)
 	// * One argument: Read the input data array from the given file.
 	// compute reference solution
 	float reference = 1.0f;  
+
 	computeGold(&reference , h_data, num_elements);
 
 	// **===-------- Modify the body of this function -----------===**
@@ -104,6 +110,10 @@ int main( int argc, char** argv)
 
 
 
+
+
+
+
 // **===----------------- Modify this function ---------------------===**
 // Take h_data from host, copies it to device, setup grid and thread 
 // dimensions, excutes kernel function, and copy result of scan back
@@ -111,9 +121,30 @@ int main( int argc, char** argv)
 // Note: float* h_data is both the input and the output of this function.
 float computeOnDevice(float* h_data, int num_elements)
 {
+	
+float *dA;	
+	cudaMalloc((void**)&dA, sizeof(float)*num_elements);
+	cudaMemcpy(dA, h_data, sizeof(float)*num_elements, cudaMemcpyHostToDevice);
+	//cudaMemset(dA, 0, num_elements*sizeof(float));	
+	int numthreads = 1024;
+	
+	while(numthreads > 1)
+	{
+		
+		reduction<<<1, numthreads, numthreads*sizeof(float)>>>(dA, numthreads);
+		numthreads = numthreads/2;
+	
 
+	}
+
+
+	cudaMemcpy(h_data, dA, sizeof(float)*1, cudaMemcpyDeviceToHost);
 	// placeholder
-	return 0.0f;
+	return h_data[0];
+
+	
 
 }
+
+
 

@@ -12,7 +12,7 @@ CXXSTD	:= -std=c++14
 LDFLAGS := 
 
 # Names of executables to create
-EXEC	:= problem1.exe problem2.exe problem3.exe problem3b.exe
+EXEC	:= problem1.exe problem2.exe
 
 .DEFAULT_GOAL := all
 
@@ -21,31 +21,13 @@ debug : OPT  := -O0 -g -fno-omit-frame-pointer -fsanitize=address
 debug : LDFLAGS := -fsanitize=address
 debug : $(EXEC)
 
-all : Makefile $(EXEC)
+all : problem1 problem2
 
-%.o : %.c Makefile
-	@ echo Compiling $<...
-	@ $(CC) $(CCSTD) $(WFLAGS) $(OPT) $(CFLAGS) -c $< -o $@
+problem1 : problem1.cpp
+	g++ problem1.cpp -std=c++11 -o problem1.exe
 
-%.o : %.cpp Makefile
-	@ echo Compiling $<...
-	@ $(CXX) $(CXXSTD) $(WFLAGS) $(OPT) $(CXXFLAGS) -c $< -o $@
-
-problem1.exe : problem1.o
-	@ echo Building $@...
-	@ $(CXX) -o $@ $< $(LDFLAGS)
-
-problem2.exe : problem2.o
-	@ echo Building $@...
-	@ $(CXX) -o $@ $< $(LDFLAGS)
-
-problem3.exe : problem3.o
-	@ echo Building $@...
-	@ $(CXX) -o $@ $< $(LDFLAGS)
-
-problem3b.exe : problem3b.o
-	@ echo Building $@...
-	@ $(CXX) -o $@ $< $(LDFLAGS)
+problem2 : problem2.cpp
+	g++ problem2.cpp -std=c++14 -o problem2.exe
 
 .PHONY: clean
 clean:
