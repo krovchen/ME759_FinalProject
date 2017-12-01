@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
 	mpi::context ctx(&argc, &argv);
 	std::ifstream file_in;
 	file_in.open("problem1.inp");
-	int N;
+	double N;
 	clock_t begin;
 	clock_t end;
 	double time_passed;
