@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
 	}
 	loc_sum=0;
 	begin = clock();
-	#pragma omp parallel num_threads(4)
+	#pragma omp parallel num_threads(8)
 	{
 	#pragma omp for reduction(+:loc_sum)
 	for(i = 0; i < N; i++)

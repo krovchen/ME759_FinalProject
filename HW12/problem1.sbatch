@@ -5,8 +5,8 @@
 #SBATCH --ntasks=2
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=8  # Use 8 OpenMP threads (you can use however many you like)
-#SBATCH --error=/srv/home/thaines/HW12/problem1.err
-#SBATCH --output=/srv/home/thaines/HW12/problem1.out
+#SBATCH --error=/srv/home/mkravchenko/759--krovchen/HW12/problem1.err
+#SBATCH --output=/srv/home/mkravchenko/759--krovchen/HW12/problem1.out
 ##SBATCH --gpu:res=1
 
 mpiexec -np 2 ./problem1 1024
