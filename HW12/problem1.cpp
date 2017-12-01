@@ -81,5 +81,6 @@ int main(int argc, char *argv[]) {
 		const float send_sum=loc_sum;
 		constexpr int dest_rank =0;  // We send a message to Task 0
 		MPI_Send(&send_sum, 1, MPI_FLOAT, dest_rank, 0, MPI_COMM_WORLD);
+	return 0;
 	}
 }
