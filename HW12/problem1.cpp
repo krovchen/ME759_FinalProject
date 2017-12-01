@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
 	mpi::context ctx(&argc, &argv);
 	std::ifstream file_in;
 	file_in.open("problem1.inp");
-	double N;
+	long int N;
 	clock_t begin;
 	clock_t end;
 	double time_passed;
@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
 	#pragma omp parallel num_threads(8)
 	{
 	#pragma omp for reduction(+:loc_sum)
-	for(i = 0; i < N; i++)
+	for(i= 0; i < N; i++)
 	{
 		loc_sum = loc_sum+in_vec[i];
 	}
