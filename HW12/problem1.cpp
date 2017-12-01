@@ -70,11 +70,10 @@ int main(int argc, char *argv[]) {
 		MPI_Recv(&x, 1, MPI_FLOAT, source_rank, 0, MPI_COMM_WORLD, &status);
 		end = clock();
 		time_passed = double(end-begin)/CLOCKS_PER_SEC*1000;
-		std::cout << "Received x = " << x << " on root task.\n";
-		std::cout << "CAlculated = " << loc_sum << "\n";
-		std::cout << "N = " << N << "\n";
-		std::cout << "time passed = " << time_passed << "\n";
-		std::cout << "total_Red = " << loc_sum+x << "\n";
+	
+		std::cout << N << "\n";
+		std::cout << time_passed << "\n";
+		std::cout <<loc_sum+x << "\n";
 		
 			
 } else {
