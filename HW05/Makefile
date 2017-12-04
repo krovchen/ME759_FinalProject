@@ -1,18 +1,18 @@
 # Warnings
-WFLAGS := -Wall -Wextra -Wsign-conversion -Wsign-compare
+WFLAGS	:= -Wall -Wextra -Wsign-conversion -Wsign-compare
 
 # Optimization and architecture
-OPT  := -O3 -mavx -fopenmp
+OPT		:= -O3
 
 # Language standard
 CCSTD	:= -std=c99
 CXXSTD	:= -std=c++14
 
 # Linker options
-LDFLAGS := -fopenmp
+LDFLAGS := 
 
 # Names of executables to create
-EXEC := problem1 problem2
+EXEC	:= problem1.exe problem2.exe
 
 .DEFAULT_GOAL := all
 
@@ -21,20 +21,15 @@ debug : OPT  := -O0 -g -fno-omit-frame-pointer -fsanitize=address
 debug : LDFLAGS := -fsanitize=address
 debug : $(EXEC)
 
-all : Makefile $(EXEC)
+all : problem1 problem2
 
-%.o : %.c Makefile
-	@ echo Compiling $<...
-	@ $(CC) $(CCSTD) $(WFLAGS) -Wno-unused-result $(OPT) $(CFLAGS) -c $< -o $@
+problem1 : problem1.cpp
+	g++ problem1.cpp -std=c++14 -o problem1.exe -fopenmp -O3
 
-%.o : %.cpp Makefile
-	@ echo Compiling $<...
-	@ $(CXX) $(CXXSTD) $(WFLAGS) $(OPT) $(CXXFLAGS) -c $< -o $@
 
-$(EXEC) : % : %.o
-	@ echo Building $@...
-	@ $(CXX) -o $@ $< $(LDFLAGS)
+problem2 : problem2.cpp
+	g++ problem2.cpp -std=c++14 -o problem2.exe -fopenmp -O3 -lm  -mavx2
 
 .PHONY: clean
 clean:
-	@ rm -f *.o $(EXEC) *.in
+	@ rm -f *.o $(EXEC)

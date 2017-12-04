@@ -1,6 +1,16 @@
 #include<iostream>
 #include<stdio.h>
 #include<cuda.h>
+
+using namespace std;
+
+__global__ void addKernel(double* arrA, double* arrB, double* arrC, int N){
+	int thid = threadIdx.x+blockIdx.x*blockDim.x;
+	if(thid < N)
+	arrC[thid] = arrA[thid]+arrB[thid];
+}
+
+
 int main( int argc, char *argv[])
 {
 
@@ -9,6 +19,7 @@ int main( int argc, char *argv[])
 		printf("Invalid argument Usage: ./problem3 N M");
 		return 0;
 	}
+
 
 	FILE *fpA,*fpB;
 	int N = atoi(argv[1]);
@@ -40,24 +51,62 @@ int main( int argc, char *argv[])
 
 
 
+	int nBlocks = N/M;
+	float blockRem = N/M - nBlocks;
+	if(blockRem != 0)
+	nBlocks = nBlocks+1;
+	//cout << "blocks used: " << nBlocks << "\n";
+
+
+
       for(int i=0;i<N;i++)
         refC[i]=hA[i]+hB[i];
 
 
-	cudaEventRecord(startEvent_inc,0); // starting timing for inclusive
+	cudaEventRecord(startEvent_inc,0);
+
+	
+ // starting timing for inclusive
 	// TODO allocate memory for arrays and copay array A and B
+
+
+	cudaMalloc((void**)&dA, sizeof(double)*N);
+
+	cudaMemcpy(dA, hA, sizeof(double)*N, cudaMemcpyHostToDevice);
+
+	cudaMalloc((void**)&dB, sizeof(double)*N);
+
+	cudaMemcpy(dB, hB, sizeof(double)*N, cudaMemcpyHostToDevice);
+
+	cudaMalloc((void**)&dC, sizeof(double)*N);
+
+	//cudaMemset(dC, 1, sizeof(double)*N);
+
+
+	cudaMemcpy(hC, dC, sizeof(double)*N, cudaMemcpyDeviceToHost);
+
+	//cout << "first value of host array after copying back dC is: " << hC[0] << "\n";
+	
 
 	cudaEventRecord(startEvent_exc,0); // staring timing for exclusive
 
-	// TODO launch kernel 
 
+
+	addKernel<<<nBlocks, M>>>(dA, dB, dC, N);
+
+
+
+	//cout << "ran kernel" << "\n";
 	cudaEventRecord(stopEvent_exc,0);  // ending timing for exclusive
 	cudaEventSynchronize(stopEvent_exc);   
 	cudaEventElapsedTime(&elapsedTime_exc, startEvent_exc, stopEvent_exc);
 
 	// TODO copy data back
+	cudaMemcpy(hC, dC, sizeof(double)*N, cudaMemcpyDeviceToHost);
 
+	//cout << "last dC = " << dC[1] << "\n";
 
+	//cout << "copied mem back" << "\n";
 	cudaEventRecord(stopEvent_inc,0);  //ending timing for inclusive
 	cudaEventSynchronize(stopEvent_inc);   
 	cudaEventElapsedTime(&elapsedTime_inc, startEvent_inc, stopEvent_inc);
@@ -68,18 +117,40 @@ int main( int argc, char *argv[])
 	int count=0;
 	for(int i=0;i<N;i++)
 	{
+		//cout << hC[i]  << "\n";
+		//cout << hA[i] << "\n";
 		if(hC[i]!=refC[i])
 		{
 			count++;
 		}
 	}
 	if(count!=0) // This should never be printed in correct code
-		std::cout<<"Error at "<< count<<" locations\n";
-	std::cout<<N<<"\n"<<M<<"\n"<<elapsedTime_exc<<"\n"<<elapsedTime_inc<<"\n"<<hC[N-1]<<"\n";
+		cout<<"Error at "<< count<<" locations\n";
+
+	//cout << "time to print results: " << "\n";
+	cout<<N<<"\n";
+	cout<<M<<"\n";
+	cout <<elapsedTime_exc<<"\n";
+	cout <<elapsedTime_inc<<"\n";
+	cout <<hC[N-1]<<"\n";
 	//freeing memory
 	delete[] hA,hB,hC,refC;     
 
 	// TODO free CUDA memory allocated
+	cudaFree(dA);
+	cudaFree(dB);
+	cudaFree(dC);
 
 	return 0;
 }
+
+
+
+	
+	
+
+
+
+
+
+
