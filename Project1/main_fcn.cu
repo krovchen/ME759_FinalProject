@@ -61,6 +61,12 @@ int main()
 	const double inp1[N] = {1,2,3,4,5};
 	const double inp2[N] = {1,2,3,4,5};
 	cout << "WHADDUP I initialized inp1 " << endl;
+
+	int i = 0;
+	for(i = 0; i < N; i++)
+		cout << inp1[i] << endl;
+	end
+	cout << "Test1 finished" << endl;
 	(*help_input).initS(&inp1[0], &inp2[0]);	
 	cout <<"passed set ptr test " << endl;
 
