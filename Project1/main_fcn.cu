@@ -30,8 +30,8 @@ bool main_fcn(bool * call_help1, bool * help_rdy1, double * out_data, help_input
 bool help_fcn(help_input_from_main help_input, double* out);
 
 //function declarations -- calc kernel and monitor kernel
-__global__ void dataKernel(int* data, int size, volatile int * out_ptr);
-
+__global__ void dataKernel( int* data, int size);
+__global__ void monitorKernel(int * write_2_ptr,  int * read_in_ptr);
 
 
 int main()
@@ -105,25 +105,33 @@ int main()
 	cout << "begin CUDA Testing" << endl;
 	//begin CUDA testing
 	const int numElems = 4;
-	int hostArray[numElems], *dArray;
+	int hostArray[numElems];
+	 int *dArray;
 	int i = 0;
 
 	//pointer of helper function return
-	volatile int *h_data, *d_data;
-	cudaSetDeviceFlags(cudaDeviceMapHost);
-	cudaHostAlloc((void **)&h_data, sizeof(int), cudaHostAllocMapped);
-	cudaHostGetDevicePointer((int **)&d_data, (int *)h_data,0);
+	 int *h_data;
+	int *monitor_data;
+	//cudaSetDeviceFlags(cudaDeviceMapHost);
+	//cudaHostAlloc((void **)&h_data, sizeof(int), cudaHostAllocMapped);
+	//cudaHostGetDevicePointer((int **)&d_data, (int *)h_data,0);
 
+	
 	cudaMalloc((void**)&dArray, sizeof(int)*numElems);
 	cudaMemset(dArray, 0, numElems*sizeof(int));
+	cudaMalloc((void**)&monitor_data, sizeof(int));
 	
-	dataKernel<<<1, 4>>>(dArray, numElems, d_data);
+	dataKernel<<<1, 4>>>(dArray, numElems);
+	monitorKernel<<<1, 1>>>(monitor_data, &dArray[2]);
+	
+	cudaMemcpy(h_data, monitor_data, sizeof(int), cudaMemcpyDeviceToHost);
 	cudaMemcpy(&hostArray, dArray, sizeof(int)*numElems, cudaMemcpyDeviceToHost);
 
 	cout << "Values in hostArray: " << endl;
 	for(i = 0; i < numElems; i++)
 		cout << hostArray[i] << endl;
 	cudaFree(dArray);
+	cudaFree(monitor_data);
 
 	cout << "Expected h_data to point to 1, actual point to: " << *h_data << endl;
 
@@ -190,16 +198,18 @@ bool help_fcn(help_input_from_main help_input, double* out){
 
 
 
-__global__ void dataKernel(int* data, int size, volatile int *out_ptr){
+__global__ void dataKernel( int* data, int size){
 //this adds a value to a variable stored in global memory
 	int thid = threadIdx.x+blockIdx.x*blockDim.x;
 	if(thid < size)
 	data[thid] = (blockIdx.x+ threadIdx.x);
-	if(thid == 1)
-		out_ptr = &data[1];
+
 }
 
 
+__global__ void monitorKernel(int * write_2_ptr,  int * read_in_ptr){
+//this adds a value to a variable stored in global memory
+	*write_2_ptr = *read_in_ptr;
 
-
+}
 
