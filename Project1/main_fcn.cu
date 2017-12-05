@@ -1,3 +1,5 @@
+//759 project
+
 #include<cuda.h>
 #include<iostream>
 #include<stdio.h>
