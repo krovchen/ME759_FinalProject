@@ -133,9 +133,13 @@ int main()
 	cout << "Values in hostArray: " << endl;
 	for(i = 0; i < numElems; i++)
 		cout << hostArray[i] << endl;
+	cout << "free dArray" << endl;
 	cudaFree(dArray);
+	cout << "monitor data" << endl;
 	cudaFree(monitor_data);
 
+
+	cout << "non-dereferenced h_Data = " << h_data << endl;
 	cout << "Expected h_data to point to 1, actual point to: " << *h_data << endl;
 
 	return 0;
