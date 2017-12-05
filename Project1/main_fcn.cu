@@ -18,7 +18,6 @@ struct help_input_from_main{
 	void initS(double* v1, double* v2){
 		int i = 0;
 		for(i = 0; i < N; i++){
-			cout << i << endl;
 			inp1[i] = v1[i];
 			inp2[i] = v2[i];
 		}
@@ -61,21 +60,12 @@ int main()
 	
 	help_input_from_main* help_input = &test_input;
 
-	cout << "starting set ptr test " << endl;
+
 	static double inp1[N] = {1,2,3,4,5};
 	static double inp2[N] = {1,2,3,4,5};
-	cout << "WHADDUP I initialized inp1 " << endl;
 
-	test_input.initS(inp1, inp2);
-	cout << "whaddup it works w/ non-pointers!!!!" << endl;
-
-	int iaa = 0;
-	for(iaa = 0; iaa < N; iaa++)
-		cout << inp1[iaa] << endl;
-
-	cout << "Test1 finished" << endl;
 	(*help_input).initS(&inp1[0], &inp2[0]);	
-	cout <<"passed set ptr test " << endl;
+
 
 
 
