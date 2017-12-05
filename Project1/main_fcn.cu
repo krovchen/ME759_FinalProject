@@ -55,12 +55,19 @@ int main()
 	bool *interrupt_help = &interrupt_help_cmd;
 	double *out = &out_val;
 
-	help_input_from_main* help_input;
+
 	
+	help_input_from_main test_input;
+	
+	help_input_from_main* help_input = &test_input;
+
 	cout << "starting set ptr test " << endl;
 	static double inp1[N] = {1,2,3,4,5};
 	static double inp2[N] = {1,2,3,4,5};
 	cout << "WHADDUP I initialized inp1 " << endl;
+
+	test_input.initS(inp1, inp2);
+	cout << "whaddup it works w/ non-pointers!!!!" << endl;
 
 	int iaa = 0;
 	for(iaa = 0; iaa < N; iaa++)
