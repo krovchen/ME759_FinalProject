@@ -120,11 +120,14 @@ int main()
 	cudaMalloc((void**)&dArray, sizeof(int)*numElems);
 	cudaMemset(dArray, 0, numElems*sizeof(int));
 	cudaMalloc((void**)&monitor_data, sizeof(int));
-	
+
+	cout << "calling data kernel" << endl;
 	dataKernel<<<1, 4>>>(dArray, numElems);
+	cout << "calling monitor kernel" << endl;
 	monitorKernel<<<1, 1>>>(monitor_data, &dArray[2]);
-	
+	cout << "reading monitor kernel" << endl;
 	cudaMemcpy(h_data, monitor_data, sizeof(int), cudaMemcpyDeviceToHost);
+	cout << "reading data kernel" << endl;
 	cudaMemcpy(&hostArray, dArray, sizeof(int)*numElems, cudaMemcpyDeviceToHost);
 
 	cout << "Values in hostArray: " << endl;
@@ -136,6 +139,7 @@ int main()
 	cout << "Expected h_data to point to 1, actual point to: " << *h_data << endl;
 
 	return 0;
+
 
 }
 
