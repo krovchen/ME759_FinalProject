@@ -29,6 +29,9 @@ struct help_input_from_main{
 bool main_fcn(bool * call_help1, bool * help_rdy1, double * out_data, help_input_from_main* help_input, bool *interrupt_help);
 bool help_fcn(help_input_from_main help_input, double* out);
 
+//function declarations -- calc kernel and monitor kernel
+__global__ void dataKernel(int* data, int size);
+__global__ void monitorKernel(int* data, int size);
 
 
 int main()
@@ -92,6 +95,26 @@ int main()
 
 	}
 
+
+
+
+
+	//begin CUDA testing
+	const int numElems = 16;
+	int hostArray[numElems], *dArray;
+	int i = 0;
+	cudaMalloc((void**)&dArray, sizeof(int)*numElems);
+	cudaMemset(dArray, 0, numElems*sizeof(int));
+	
+	dataKernel<<<2, 8>>>(dArray, numElems);
+	cudaMemcpy(&hostArray, dArray, sizeof(int)*numElems, cudaMemcpyDeviceToHost);
+
+	cout << "Values in hostArray: " << endl;
+	for(i = 0; i < numElems; i++)
+		cout << hostArray[i] << endl;
+	cudaFree(dArray);
+
+
 	return 0;
 
 }
@@ -151,7 +174,24 @@ bool help_fcn(help_input_from_main help_input, double* out){
 	
 	}
 	return 1;
-
-
-
 }
+
+
+
+__global__ void dataKernel(int* data, int size){
+//this adds a value to a variable stored in global memory
+	int thid = threadIdx.x+blockIdx.x*blockDim.x;
+	if(thid < size)
+	data[thid] = (blockIdx.x+ threadIdx.x);
+}
+
+__global__ void monitorKernel(int* data, int size){
+//this adds a value to a variable stored in global memory
+	int thid = threadIdx.x+blockIdx.x*blockDim.x;
+	if(thid < size)
+	data[thid] = (blockIdx.x+ threadIdx.x);
+}
+
+
+
+
