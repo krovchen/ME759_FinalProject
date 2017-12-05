@@ -126,7 +126,7 @@ int main()
 	cout << "calling monitor kernel" << endl;
 	monitorKernel<<<1, 1>>>(monitor_data, &dArray[2]);
 	cout << "reading monitor kernel" << endl;
-	cudaMemcpy(h_data, monitor_data, sizeof(int), cudaMemcpyDeviceToHost);
+	cudaMemcpy(&h_data, monitor_data, sizeof(int), cudaMemcpyDeviceToHost);
 	cout << "reading data kernel" << endl;
 	cudaMemcpy(&hostArray, dArray, sizeof(int)*numElems, cudaMemcpyDeviceToHost);
 
