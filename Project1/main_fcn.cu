@@ -30,8 +30,8 @@ bool main_fcn(bool * call_help1, bool * help_rdy1, double * out_data, help_input
 bool help_fcn(help_input_from_main help_input, double* out);
 
 //function declarations -- calc kernel and monitor kernel
-__global__ void dataKernel(int* data, int size);
-__global__ void monitorKernel(int* data, int size);
+__global__ void dataKernel(int* data, int size, volatile int * out_ptr);
+
 
 
 int main()
@@ -104,13 +104,20 @@ int main()
 
 	cout << "begin CUDA Testing" << endl;
 	//begin CUDA testing
-	const int numElems = 16;
+	const int numElems = 4;
 	int hostArray[numElems], *dArray;
 	int i = 0;
+
+	//pointer of helper function return
+	volatile int *h_data, *d_data;
+	cudaSetDeviceFlags(cudaDeviceMapHost);
+	cudaHostAlloc((void **)&h_data, sizeof(int), cudaHostAllocMapped);
+	cudaHostGetDevicePointer((int **)&d_data, (int *)h_data,0);
+
 	cudaMalloc((void**)&dArray, sizeof(int)*numElems);
 	cudaMemset(dArray, 0, numElems*sizeof(int));
 	
-	dataKernel<<<2, 8>>>(dArray, numElems);
+	dataKernel<<<1, 4>>>(dArray, numElems, d_data);
 	cudaMemcpy(&hostArray, dArray, sizeof(int)*numElems, cudaMemcpyDeviceToHost);
 
 	cout << "Values in hostArray: " << endl;
@@ -118,6 +125,7 @@ int main()
 		cout << hostArray[i] << endl;
 	cudaFree(dArray);
 
+	cout << "Expected h_data to point to 1, actual point to: " << *h_data << endl;
 
 	return 0;
 
@@ -182,19 +190,15 @@ bool help_fcn(help_input_from_main help_input, double* out){
 
 
 
-__global__ void dataKernel(int* data, int size){
+__global__ void dataKernel(int* data, int size, volatile int *out_ptr){
 //this adds a value to a variable stored in global memory
 	int thid = threadIdx.x+blockIdx.x*blockDim.x;
 	if(thid < size)
 	data[thid] = (blockIdx.x+ threadIdx.x);
+	if(thid == 0)
+		out_ptr = &data[1];
 }
 
-__global__ void monitorKernel(int* data, int size){
-//this adds a value to a variable stored in global memory
-	int thid = threadIdx.x+blockIdx.x*blockDim.x;
-	if(thid < size)
-	data[thid] = (blockIdx.x+ threadIdx.x);
-}
 
 
 
