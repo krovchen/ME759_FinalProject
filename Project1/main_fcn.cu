@@ -1,5 +1,3 @@
-//759 project
-
 #include<cuda.h>
 #include<iostream>
 #include<stdio.h>
@@ -11,6 +9,7 @@ using namespace std;
 //global variables
 const bool allow_interrupt = 0;
 const int N = 5;
+bool stop_kernel =0;
 
 struct help_input_from_main{
 	static const int length = N;
@@ -115,34 +114,38 @@ int main()
 	int transfered_data;
 	 int *h_data = &transfered_data;
 	int *monitor_data;
+
+	bool *stop_kern_ptr = &stop_kernel;
 	//cudaSetDeviceFlags(cudaDeviceMapHost);
 	//cudaHostAlloc((void **)&h_data, sizeof(int), cudaHostAllocMapped);
 	//cudaHostGetDevicePointer((int **)&d_data, (int *)h_data,0);
 	
-	
+	cudaMalloc(&stop_kern_ptr, sizeof(bool));
 	cudaMalloc((void**)&dArray, sizeof(int)*numElems);
 	cudaMemset(dArray, 0, numElems*sizeof(int));
 	cudaMalloc((void**)&monitor_data, sizeof(int));
+	cudaMalloc((void**)&dArray, sizeof(int)*numElems);
 
-	cout << "calling data kernel" << endl;
+
+
 	dataKernel<<<1, 4>>>(dArray, numElems);
-	cout << "calling monitor kernel" << endl;
+
 	monitorKernel<<<1, 1>>>(monitor_data, &dArray[2]);
-	cout << "reading monitor kernel" << endl;
+
 	cudaMemcpy(h_data, monitor_data, sizeof(int), cudaMemcpyDeviceToHost);
-	cout << "reading data kernel" << endl;
+
 	cudaMemcpy(&hostArray, dArray, sizeof(int)*numElems, cudaMemcpyDeviceToHost);
 
-	cout << "Values in hostArray: " << endl;
+
 	for(i = 0; i < numElems; i++)
 		cout << hostArray[i] << endl;
-	cout << "free dArray" << endl;
+
 	cudaFree(dArray);
-	cout << "free monitor data" << endl;
+
 	cudaFree(monitor_data);
 
 
-	cout << "non-dereferenced h_Data = " << h_data << endl;
+
 	cout << "Expected h_data to point to 1, actual point to: " << *h_data << endl;
 
 	return 0;
