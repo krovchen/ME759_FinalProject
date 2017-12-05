@@ -195,7 +195,7 @@ __global__ void dataKernel(int* data, int size, volatile int *out_ptr){
 	int thid = threadIdx.x+blockIdx.x*blockDim.x;
 	if(thid < size)
 	data[thid] = (blockIdx.x+ threadIdx.x);
-	if(thid == 0)
+	if(thid == 1)
 		out_ptr = &data[1];
 }
 
