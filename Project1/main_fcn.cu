@@ -15,7 +15,7 @@ struct help_input_from_main{
 	double inp1[N];
 	double inp2[N];
 
-	void initS(double* v1, double* v2){
+	void initS(const double* v1, const double* v2){
 		int i = 0;
 		for(i = 0; i < N; i++){
 			inp1[i] = v1[i];
@@ -57,8 +57,8 @@ int main()
 	help_input_from_main* help_input;
 	
 	cout << "starting set ptr test " << endl;
-	double inp1[N] = {1,2,3,4,5};
-	double inp2[N] = {1,2,3,4,5};
+	const double inp1[N] = {1,2,3,4,5};
+	const double inp2[N] = {1,2,3,4,5};
 	cout << "WHADDUP I initialized inp1 " << endl;
 	(*help_input).initS(&inp1[0], &inp2[0]);	
 	cout <<"passed set ptr test " << endl;
