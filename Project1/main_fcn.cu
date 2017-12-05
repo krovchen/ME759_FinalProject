@@ -60,7 +60,7 @@ int main()
 	double inp1[N] = {1,2,3,4,5};
 	double inp2[N] = {1,2,3,4,5};
 	cout << "WHADDUP I initialized inp1 " << endl;
-	(*help_input).initS(inp1, inp2);	
+	(*help_input).initS(&inp1[0], &inp2[0]);	
 	cout <<"passed set ptr test " << endl;
 
 
