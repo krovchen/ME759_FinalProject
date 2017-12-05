@@ -109,13 +109,14 @@ int main()
 	 int *dArray;
 	int i = 0;
 
-	//pointer of helper function return
-	 int *h_data;
+	//pointer of helper function return	
+	int transfered_data;
+	 int *h_data = &transfered_data;
 	int *monitor_data;
 	//cudaSetDeviceFlags(cudaDeviceMapHost);
 	//cudaHostAlloc((void **)&h_data, sizeof(int), cudaHostAllocMapped);
 	//cudaHostGetDevicePointer((int **)&d_data, (int *)h_data,0);
-
+	
 	
 	cudaMalloc((void**)&dArray, sizeof(int)*numElems);
 	cudaMemset(dArray, 0, numElems*sizeof(int));
@@ -126,7 +127,7 @@ int main()
 	cout << "calling monitor kernel" << endl;
 	monitorKernel<<<1, 1>>>(monitor_data, &dArray[2]);
 	cout << "reading monitor kernel" << endl;
-	cudaMemcpy(&h_data, monitor_data, sizeof(int), cudaMemcpyDeviceToHost);
+	cudaMemcpy(h_data, monitor_data, sizeof(int), cudaMemcpyDeviceToHost);
 	cout << "reading data kernel" << endl;
 	cudaMemcpy(&hostArray, dArray, sizeof(int)*numElems, cudaMemcpyDeviceToHost);
 
@@ -135,7 +136,7 @@ int main()
 		cout << hostArray[i] << endl;
 	cout << "free dArray" << endl;
 	cudaFree(dArray);
-	cout << "monitor data" << endl;
+	cout << "free monitor data" << endl;
 	cudaFree(monitor_data);
 
 
