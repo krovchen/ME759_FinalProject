@@ -112,7 +112,7 @@ int main()
 
 
 
-
+	cout << "begin CUDA Testing" << endl;
 	//begin CUDA testing
 	const int numElems = 16;
 	int hostArray[numElems], *dArray;
