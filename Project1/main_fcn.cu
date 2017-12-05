@@ -18,6 +18,7 @@ struct help_input_from_main{
 	void initS(const double* v1, const double* v2){
 		int i = 0;
 		for(i = 0; i < N; i++){
+			cout << i << endl;
 			inp1[i] = v1[i];
 			inp2[i] = v2[i];
 		}
