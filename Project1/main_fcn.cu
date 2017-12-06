@@ -260,14 +260,13 @@ __global__ void dataKernel( int* data, int size, int* data_held){
 		data_held[thid] = (blockIdx.x+ threadIdx.x);
 		data[thid] = (blockIdx.x+ threadIdx.x);
 		while(1){
-			if(data[thid] < 50000)
+			if(data[thid] < 1000)
 				data[thid] = data[thid]+.2;
 			else
-				data[thid] = data[thid]-10000;
+				data[thid] = data[thid]-100;
 			if(*stop_kernel == 1){
 					__threadfence();
-					if(thid == 0)
-						printf("Stopping Data Kernel \n");
+
 					asm("trap;");
 					}
 					
@@ -282,7 +281,7 @@ __global__ void dataKernel( int* data, int size, int* data_held){
 
 __global__ void monitorKernel(int * write_2_ptr,  int * read_in_ptr){
 	*write_2_ptr = *read_in_ptr;
-	printf("Writing over value %d\n", *write_2_ptr);
+
 
 }
 
