@@ -120,6 +120,7 @@ int main()
 					monitorKernel<<<1, 1,0, stream1>>>(monitor_data, &dArray[2]);
 					cout <<"Launching Async Mem Cpy" << endl;
 					cudaMemcpyAsync(h_data, monitor_data, sizeof(int), cudaMemcpyDeviceToHost, stream1);
+					cudaDeviceSynchronize();
 					CF.request_val_cmd = 0;
 					*out = *h_data;
 					CF.req_delivered_cmd = 1;
@@ -260,8 +261,6 @@ __global__ void dataKernel( int* data, int size){
 				data[thid] = data[thid]-10000;
 			if(*stop_kernel == 1){
 					__threadfence();
-					if(thid == 0)
-						printf( "stop cmd received via stream1");
 					asm("trap;");
 					}
 					
@@ -275,7 +274,6 @@ __global__ void dataKernel( int* data, int size){
 
 
 __global__ void monitorKernel(int * write_2_ptr,  int * read_in_ptr){
-//this adds a value to a variable stored in global memory
 	*write_2_ptr = *read_in_ptr;
 
 }
