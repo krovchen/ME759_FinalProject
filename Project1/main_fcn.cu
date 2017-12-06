@@ -107,26 +107,31 @@ int main()
 
 
 			while(CF.main_done_cmd == 0){
-				//sleep(10);
-				//cout << *call_help <<endl;
-				//cout << *help_running << endl;
+
 				if(CF.call_help_cmd == 1 && CF.help_running_cmd == 0){
 					CF.help_running_cmd = 1;
 					CF.call_help_cmd = 0;
+					cout <<"Launching Helper Kernel" << endl;
 					//*help_rdy =  help_fcn(*help_input, out);
 					dataKernel<<<1, 4>>>(dArray, numElems);
 				}
-				if(CF.help_running_cmd == 1 && allow_interrupt == 0 && CF.request_val_cmd == 1){
+				if(CF.help_running_cmd == 1 && allow_interrupt == 0 && CF.request_val_cmd == 1){	
+					cout <<"Launching Monitor Kernel" << endl;
 					monitorKernel<<<1, 1,0, stream1>>>(monitor_data, &dArray[2]);
+					cout <<"Launching Async Mem Cpy" << endl;
 					cudaMemcpyAsync(h_data, monitor_data, sizeof(int), cudaMemcpyDeviceToHost, stream1);
 					CF.request_val_cmd = 0;
+					*out = *h_data;
 					CF.req_delivered_cmd = 1;
 				}	
 			}
 
 			bool stop_kernel = 1;
 			bool *host_stop_kernel = &stop_kernel;
+			cout <<"Trying to Stop Helper Kernel" << endl;
 			cudaMemcpyAsync(&stop_kernel, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice, stream1);
+
+			cout << "Copying values from helper kernel to base (but they may be garbage!!!!!" << endl;
 			cudaMemcpy(&hostArray, dArray, sizeof(int)*numElems, cudaMemcpyDeviceToHost);
 
 
@@ -162,17 +167,20 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 	//set values of helper function input
 	(*help_input_ptr).initS(inp1, inp1);
 	//ask to start help function	
+	cout << "Main calling help function for 1st time" << endl;
 	*call_help = 1;
 	
 	//some code/processing goes here
 	sleep(1);
 
 	//if interrupt not allowed, then request value from help
-	if(allow_interrupt == 0){
+	if(allow_interrupt == 0){	
+		cout << "Main requesting function update" << endl;
 		*request_val = 1;
 		while(*request_done == 0)
 			sleep(1);
 	}
+	//..cout << "Main requesting function update" << endl;
 
 	/*if(allow_interrupt == 1){
 		sleep(2); //sleep 2 s to simulate other activities or running code
@@ -181,9 +189,9 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 			sleep(1);
 	}*/
 
-	cout << "helper function returned the following value to main fnc: " << *help_out << endl;
-	
-	
+	cout << "Main update received " << *help_out << endl;
+	sleep(2);
+	cout << "Exiting Main" << endl;
 	
 	return 1;
 
@@ -233,6 +241,8 @@ __global__ void dataKernel( int* data, int size){
 				data[thid] = data[thid]-10000;
 			if(*stop_kernel == 1){
 					__threadfence();
+					if(thid == 0)
+						printf( "stop cmd received via stream1");
 					asm("trap;");
 					}
 					
