@@ -49,8 +49,8 @@ bool help_fcn(help_input_from_main help_input, double* out);
 bool init_help(help_input_from_main help_input);
 
 //function declarations -- calc kernel and monitor kernel
-__global__ void dataKernel( int* data, int size);
-__global__ void monitorKernel(int * write_2_ptr,  int * read_in_ptr);
+__global__ void dataKernel( double* data, int size);
+__global__ void monitorKernel(double * write_2_ptr,  double * read_in_ptr);
 
 
 int main()
@@ -85,22 +85,22 @@ int main()
 		if(omp_get_thread_num() == 1){
 			cout <<"Running CUDA init" << endl;
 			const int numElems = 4;
-			int hostArray[numElems];
-			int *dArray;
+			double hostArray[numElems];
+			double *dArray;
 			int i = 0;
 
 			//pointer of helper function return	
-			int transfered_data;
-			int *h_data = &transfered_data;
-			int *monitor_data;
+			double transfered_data;
+			double *h_data = &transfered_data;
+			double *monitor_data;
 
 			//bool *stop_kern_ptr = &stop_kernel;
 		
 			cudaMalloc(&stop_kernel, sizeof(bool));
-			cudaMalloc((void**)&dArray, sizeof(int)*numElems);
-			cudaMemset(dArray, 0, numElems*sizeof(int));
-			cudaMalloc((void**)&monitor_data, sizeof(int));
-			cudaMalloc((void**)&dArray, sizeof(int)*numElems);
+			cudaMalloc((void**)&dArray, sizeof(double)*numElems);
+			cudaMemset(dArray, 0, numElems*sizeof(double));
+			cudaMalloc((void**)&monitor_data, sizeof(double));
+			
 
 			cudaStream_t stream1;
 			cudaStreamCreate(&stream1);
@@ -249,7 +249,7 @@ return 1;
 
 
 
-__global__ void dataKernel( int* data, int size){
+__global__ void dataKernel( double* data, int size){
 //this adds a value to a variable stored in global memory
 	int thid = threadIdx.x+blockIdx.x*blockDim.x;
 	int i = 0;
@@ -274,7 +274,7 @@ __global__ void dataKernel( int* data, int size){
 }
 
 
-__global__ void monitorKernel(int * write_2_ptr,  int * read_in_ptr){
+__global__ void monitorKernel(double * write_2_ptr,  double * read_in_ptr){
 	*write_2_ptr = *read_in_ptr;
 
 }
