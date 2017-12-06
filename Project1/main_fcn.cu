@@ -44,13 +44,13 @@ struct ctrl_flags{
 	bool *request_done = &req_delivered_cmd;};
 
 //function declarations -- helper and main
-bool main_fcn(ctrl_flags CF, double * out_data, help_input_from_main* help_input);
+bool main_fcn(ctrl_flags CF, int * out_data, help_input_from_main* help_input);
 bool help_fcn(help_input_from_main help_input, double* out);
 bool init_help(help_input_from_main help_input);
 
 //function declarations -- calc kernel and monitor kernel
-__global__ void dataKernel( double* data, int size);
-__global__ void monitorKernel(double * write_2_ptr,  double * read_in_ptr);
+__global__ void dataKernel( int* data, int size);
+__global__ void monitorKernel(int * write_2_ptr,  int * read_in_ptr);
 
 
 int main()
@@ -59,10 +59,10 @@ int main()
 	ctrl_flags CF;
 
 	//define interface between helper and main i.e.: what is returned
-	double out_val =0.0;
+	int out_val =0.0;
 
 
-	double *out = &out_val;
+	int *out = &out_val;
 
 	help_input_from_main test_input;	
 	help_input_from_main* help_input = &test_input;
@@ -85,21 +85,21 @@ int main()
 		if(omp_get_thread_num() == 1){
 			cout <<"Running CUDA init" << endl;
 			const int numElems = 4;
-			double hostArray[numElems];
-			double *dArray;
+			int hostArray[numElems];
+			int *dArray;
 			int i = 0;
 
 			//pointer of helper function return	
-			double transfered_data;
-			double *h_data = &transfered_data;
-			double *monitor_data;
+			int transfered_data;
+			int *h_data = &transfered_data;
+			int *monitor_data;
 
 			//bool *stop_kern_ptr = &stop_kernel;
 		
 			cudaMalloc(&stop_kernel, sizeof(bool));
-			cudaMalloc((void**)&dArray, sizeof(double)*numElems);
-			cudaMemset(dArray, 0, numElems*sizeof(double));
-			cudaMallocHost((void**)&monitor_data, sizeof(double));
+			cudaMalloc((void**)&dArray, sizeof(int)*numElems);
+			cudaMemset(dArray, 0, numElems*sizeof(int));
+			cudaMallocHost((void**)&monitor_data, sizeof(int));
 			
 
 			cudaStream_t stream1;
@@ -120,7 +120,7 @@ int main()
 					cudaStreamSynchronize(stream1);
 					monitorKernel<<<1, 1,0, stream1>>>(monitor_data, &dArray[2]);
 					cout <<"Launching Async Mem Cpy" << endl;
-					cudaMemcpyAsync(h_data, monitor_data, sizeof(double), cudaMemcpyDeviceToHost, stream1);
+					cudaMemcpyAsync(h_data, monitor_data, sizeof(int), cudaMemcpyDeviceToHost, stream1);
 					cudaStreamSynchronize(stream1);
 					CF.request_val_cmd = 0;
 					*out = *h_data;
@@ -134,7 +134,7 @@ int main()
 			cudaMemcpyAsync(&stop_kernel, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice, stream1);
 
 			cout << "Copying values from helper kernel to base (but they may be garbage!!!!!" << endl;
-			cudaMemcpy(&hostArray, dArray, sizeof(double)*numElems, cudaMemcpyDeviceToHost);
+			cudaMemcpy(&hostArray, dArray, sizeof(int)*numElems, cudaMemcpyDeviceToHost);
 
 
 			for(i = 0; i < numElems; i++)
@@ -155,7 +155,7 @@ int main()
 
 }
 
-bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_ptr)
+bool main_fcn(ctrl_flags CF, int* help_out, help_input_from_main* help_input_ptr)
 {	
 	bool *call_help = CF.call_help;
 	bool *help_rdy = CF.help_rdy;
@@ -249,7 +249,7 @@ return 1;
 
 
 
-__global__ void dataKernel( double* data, int size){
+__global__ void dataKernel( int* data, int size){
 //this adds a value to a variable stored in global memory
 	int thid = threadIdx.x+blockIdx.x*blockDim.x;
 	int i = 0;
@@ -274,7 +274,7 @@ __global__ void dataKernel( double* data, int size){
 }
 
 
-__global__ void monitorKernel(double * write_2_ptr,  double * read_in_ptr){
+__global__ void monitorKernel(int * write_2_ptr,  int * read_in_ptr){
 	*write_2_ptr = *read_in_ptr;
 
 }
