@@ -117,11 +117,11 @@ int main()
 				}
 				if(CF.help_running_cmd == 1 && allow_interrupt == 0 && CF.request_val_cmd == 1){	
 					cout <<"Launching Monitor Kernel" << endl;
-					cudaDeviceSynchronize(stream1);
+					cudaStreamSynchronize(stream1);
 					monitorKernel<<<1, 1,0, stream1>>>(monitor_data, &dArray[2]);
 					cout <<"Launching Async Mem Cpy" << endl;
 					cudaMemcpyAsync(h_data, monitor_data, sizeof(int), cudaMemcpyDeviceToHost, stream1);
-					cudaDeviceSynchronize(stream1);
+					cudaStreamSynchronize(stream1);
 					CF.request_val_cmd = 0;
 					*out = *h_data;
 					CF.req_delivered_cmd = 1;
