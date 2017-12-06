@@ -191,6 +191,20 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 
 	cout << "Main update received " << *help_out << endl;
 	sleep(2);
+
+	cout << "Main Requestiong Second function update " << endl;
+	*request_val = 1;
+	while(*request_done == 0)
+		sleep(1);
+	cout << "Main update received " << *help_out << endl;
+	sleep(2);
+
+	cout << "Main Requestiong Third function update " << endl;
+	*request_val = 1;
+	while(*request_done == 0)
+		sleep(1);
+	cout << "Main update received " << *help_out << endl;
+	//sleep(2);
 	cout << "Exiting Main" << endl;
 	
 	return 1;
