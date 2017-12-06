@@ -120,7 +120,7 @@ int main()
 					cudaStreamSynchronize(stream1);
 					monitorKernel<<<1, 1,0, stream1>>>(monitor_data, &dArray[2]);
 					cout <<"Launching Async Mem Cpy" << endl;
-					cudaMemcpyAsync(h_data, monitor_data, sizeof(int), cudaMemcpyDeviceToHost, stream1);
+					cudaMemcpyAsync(h_data, monitor_data, sizeof(double), cudaMemcpyDeviceToHost, stream1);
 					cudaStreamSynchronize(stream1);
 					CF.request_val_cmd = 0;
 					*out = *h_data;
@@ -134,7 +134,7 @@ int main()
 			cudaMemcpyAsync(&stop_kernel, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice, stream1);
 
 			cout << "Copying values from helper kernel to base (but they may be garbage!!!!!" << endl;
-			cudaMemcpy(&hostArray, dArray, sizeof(int)*numElems, cudaMemcpyDeviceToHost);
+			cudaMemcpy(&hostArray, dArray, sizeof(double)*numElems, cudaMemcpyDeviceToHost);
 
 
 			for(i = 0; i < numElems; i++)
