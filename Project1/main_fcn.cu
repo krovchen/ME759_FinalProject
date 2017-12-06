@@ -9,7 +9,7 @@ using namespace std;
 //global variables
 const bool allow_interrupt = 0;
 const int N = 5;
-bool stop_kernel =0;
+__device__ bool *stop_kernel =0;
 
 struct help_input_from_main{
 	static const int length = N;
@@ -26,9 +26,27 @@ struct help_input_from_main{
 
 };
 
+struct ctrl_flags{
+	bool main_done_cmd = 0;
+	bool call_help_cmd = 0;
+	bool help_rdy_cmd = 0;
+	bool help_running_cmd = 0;
+	bool interrupt_help_cmd = 0;
+	bool request_val_cmd = 0;
+	bool req_delivered_cmd = 0;
+	
+	bool *call_help = &call_help_cmd;
+	bool *help_rdy = &help_rdy_cmd;
+	bool *main_done = &main_done_cmd;
+	bool *help_running = &help_running_cmd;
+	bool *interrupt_help = &interrupt_help_cmd;
+	bool *request_val = &request_val_cmd;
+	bool *request_done = &req_delivered_cmd;};
+
 //function declarations -- helper and main
-bool main_fcn(bool * call_help1, bool * help_rdy1, double * out_data, help_input_from_main* help_input, bool *interrupt_help);
+bool main_fcn(ctrl_flags CF, double * out_data, help_input_from_main* help_input);
 bool help_fcn(help_input_from_main help_input, double* out);
+bool init_help(help_input_from_main help_input);
 
 //function declarations -- calc kernel and monitor kernel
 __global__ void dataKernel( int* data, int size);
@@ -38,29 +56,16 @@ __global__ void monitorKernel(int * write_2_ptr,  int * read_in_ptr);
 int main()
 {
 	//define booleans needed for logic
-	bool main_done_cmd = 0;
-	bool call_help_cmd = 0;	
-	bool help_rdy_cmd = 0;
-	bool help_running_cmd = 0;
-	bool interrupt_help_cmd = 0;
+	ctrl_flags CF;
 
 	//define interface between helper and main i.e.: what is returned
 	double out_val =0.0;
 
-	//define pointers to bools and doubles
-	bool *call_help = &call_help_cmd;
-	bool *help_rdy = &help_rdy_cmd;
-	bool *main_done = &main_done_cmd;
-	bool *help_running = &help_running_cmd;
-	bool *interrupt_help = &interrupt_help_cmd;
+
 	double *out = &out_val;
 
-
-	
-	help_input_from_main test_input;
-	
+	help_input_from_main test_input;	
 	help_input_from_main* help_input = &test_input;
-
 
 	static double inp1[N] = {1,2,3,4,5};
 	static double inp2[N] = {1,2,3,4,5};
@@ -68,117 +73,113 @@ int main()
 	(*help_input).initS(&inp1[0], &inp2[0]);	
 
 
-
-
-	#pragma omp parallel num_threads(2) shared(main_done, help_rdy, call_help, out, help_input, interrupt_help)
+	#pragma omp parallel num_threads(2) shared(CF)
 	{
 
-	if(omp_get_thread_num() == 0){
-		cout <<"WHATDDUP IM LAUNCHING THAT MAIN" << endl;
-	//code for master threads
-		*main_done = main_fcn(call_help, help_rdy, out, help_input, interrupt_help);
-	}
+		if(omp_get_thread_num() == 0){
+			cout <<"WHATDDUP IM LAUNCHING THAT MAIN" << endl;
+		//code for master threads
+			CF.main_done_cmd = main_fcn(CF, out, help_input);
+		}
 
-	if(omp_get_thread_num() == 1){
-		cout <<"WHATDDUP IM LAUNCHING that second" << endl;
+		if(omp_get_thread_num() == 1){
+			cout <<"Running CUDA init" << endl;
+			const int numElems = 4;
+			int hostArray[numElems];
+			int *dArray;
+			int i = 0;
+
+			//pointer of helper function return	
+			int transfered_data;
+			int *h_data = &transfered_data;
+			int *monitor_data;
+
+			//bool *stop_kern_ptr = &stop_kernel;
 		
-		while(*main_done == 0){
-			//sleep(10);
-			//cout << *call_help <<endl;
-			//cout << *help_running << endl;
-			if(*call_help == 1 && *help_running == 0){
-				*help_running = 1;
-				*call_help = 0;
-				*help_rdy =  help_fcn(*help_input, out);
+			cudaMalloc(&stop_kernel, sizeof(bool));
+			cudaMalloc((void**)&dArray, sizeof(int)*numElems);
+			cudaMemset(dArray, 0, numElems*sizeof(int));
+			cudaMalloc((void**)&monitor_data, sizeof(int));
+			cudaMalloc((void**)&dArray, sizeof(int)*numElems);
+
+			cudaStream_t stream1;
+			cudaStreamCreate(&stream1);
+
+
+			while(CF.main_done_cmd == 0){
+				//sleep(10);
+				//cout << *call_help <<endl;
+				//cout << *help_running << endl;
+				if(CF.call_help_cmd == 1 && CF.help_running_cmd == 0){
+					CF.help_running_cmd = 1;
+					CF.call_help_cmd = 0;
+					//*help_rdy =  help_fcn(*help_input, out);
+					dataKernel<<<1, 4>>>(dArray, numElems);
+				}
+				if(CF.help_running_cmd == 1 && allow_interrupt == 0 && CF.request_val_cmd == 1){
+					monitorKernel<<<1, 1,0, stream1>>>(monitor_data, &dArray[2]);
+					cudaMemcpyAsync(h_data, monitor_data, sizeof(int), cudaMemcpyDeviceToHost, stream1);
+					CF.request_val_cmd = 0;
+					CF.req_delivered_cmd = 1;
+				}	
 			}
-			//if(*help_running == 1 && *interrupt_help == 0){
 
-		}	
+			bool stop_kernel = 1;
+			bool *host_stop_kernel = &stop_kernel;
+			cudaMemcpyAsync(&stop_kernel, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice, stream1);
+			cudaMemcpy(&hostArray, dArray, sizeof(int)*numElems, cudaMemcpyDeviceToHost);
+
+
+			for(i = 0; i < numElems; i++)
+				cout << hostArray[i] << endl;
+
+			cudaFree(dArray);
+			cudaFree(monitor_data);
+			cout << "Expected h_data point to: " << *h_data << endl;
 	
+		}
+
+
+
 	}
 
-
-	}
-
-
-
-
-	cout << "begin CUDA Testing" << endl;
-	//begin CUDA testing
-	const int numElems = 4;
-	int hostArray[numElems];
-	 int *dArray;
-	int i = 0;
-
-	//pointer of helper function return	
-	int transfered_data;
-	 int *h_data = &transfered_data;
-	int *monitor_data;
-
-	bool *stop_kern_ptr = &stop_kernel;
-	//cudaSetDeviceFlags(cudaDeviceMapHost);
-	//cudaHostAlloc((void **)&h_data, sizeof(int), cudaHostAllocMapped);
-	//cudaHostGetDevicePointer((int **)&d_data, (int *)h_data,0);
-	
-	cudaMalloc(&stop_kern_ptr, sizeof(bool));
-	cudaMalloc((void**)&dArray, sizeof(int)*numElems);
-	cudaMemset(dArray, 0, numElems*sizeof(int));
-	cudaMalloc((void**)&monitor_data, sizeof(int));
-	cudaMalloc((void**)&dArray, sizeof(int)*numElems);
-
-
-
-	dataKernel<<<1, 4>>>(dArray, numElems);
-
-	monitorKernel<<<1, 1>>>(monitor_data, &dArray[2]);
-
-	cudaMemcpy(h_data, monitor_data, sizeof(int), cudaMemcpyDeviceToHost);
-
-	cudaMemcpy(&hostArray, dArray, sizeof(int)*numElems, cudaMemcpyDeviceToHost);
-
-
-	for(i = 0; i < numElems; i++)
-		cout << hostArray[i] << endl;
-
-	cudaFree(dArray);
-
-	cudaFree(monitor_data);
-
-
-
-	cout << "Expected h_data to point to 1, actual point to: " << *h_data << endl;
 
 	return 0;
 
-
 }
 
-bool main_fcn(bool* call_help, bool* help_rdy, double* help_out, help_input_from_main* help_input_ptr, bool *interrupt_help){
-	
-	cout << "WHADDUP IM IN THE MAIN " << endl;
+bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_ptr)
+{	
+	bool *call_help = CF.call_help;
+	bool *help_rdy = CF.help_rdy;
+	bool *request_val = CF.request_val;
+	bool *request_done = CF.request_done;
+
 	//initialize data for input to helper function
 	double inp1[N] = {1,2,3,4,5};
-	cout << "WHADDUP I initialized inp1 " << endl;
-	(*help_input_ptr).initS(inp1, inp1);
+	
 
-	cout << "WHADDUP ABOUT TO CALL DAT HEEELP " << endl;
-	//call help function
+	//set values of helper function input
+	(*help_input_ptr).initS(inp1, inp1);
+	//ask to start help function	
 	*call_help = 1;
 	
-	cout << "WHADDUP JUST CALLED DAT HELP " << endl;
+	//some code/processing goes here
+	sleep(1);
 
-	//if interrupt not allowed, then sleep until helper function is ready
+	//if interrupt not allowed, then request value from help
 	if(allow_interrupt == 0){
-		while(*help_rdy == 0)
+		*request_val = 1;
+		while(*request_done == 0)
 			sleep(1);
 	}
 
-	if(allow_interrupt == 1){
+	/*if(allow_interrupt == 1){
 		sleep(2); //sleep 2 s to simulate other activities or running code
 		*interrupt_help = 1;	//set helper interrupt flag
 		while(*help_rdy == 0)    // wait for helper function to finish after interrupt
 			sleep(1);
-	}
+	}*/
 
 	cout << "helper function returned the following value to main fnc: " << *help_out << endl;
 	
@@ -210,13 +211,36 @@ bool help_fcn(help_input_from_main help_input, double* out){
 	return 1;
 }
 
+bool init_help(help_input_from_main help_input){
+	
+
+return 1;
+
+}
+
 
 
 __global__ void dataKernel( int* data, int size){
 //this adds a value to a variable stored in global memory
 	int thid = threadIdx.x+blockIdx.x*blockDim.x;
-	if(thid < size)
-	data[thid] = (blockIdx.x+ threadIdx.x);
+	int i = 0;
+	if(thid < size){
+		data[thid] = (blockIdx.x+ threadIdx.x);
+		while(1){
+			if(data[thid] < 50000)
+				data[thid] = data[thid]+.2;
+			else
+				data[thid] = data[thid]-10000;
+			if(*stop_kernel == 1){
+					__threadfence();
+					asm("trap;");
+					}
+					
+	
+
+
+		}
+	}
 
 }
 
