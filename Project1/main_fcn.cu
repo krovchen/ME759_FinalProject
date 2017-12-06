@@ -99,7 +99,7 @@ int main()
 			cudaMalloc(&stop_kernel, sizeof(bool));
 			cudaMalloc((void**)&dArray, sizeof(double)*numElems);
 			cudaMemset(dArray, 0, numElems*sizeof(double));
-			cudaMalloc((void**)&monitor_data, sizeof(double));
+			cudaMallocHost((void**)&monitor_data, sizeof(double));
 			
 
 			cudaStream_t stream1;
