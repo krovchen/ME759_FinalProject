@@ -145,11 +145,14 @@ int main()
 
 			cout << "Trying to read values from Helper kernel before stopping " << endl;
 			cudaMemcpyAsync(&request_read, request_last_read, sizeof(bool), cudaMemcpyHostToDevice, stream1);
-			sleep(15);
+			sleep(1);
+			cout << "copied req comd" << endl;
 			cudaMemcpyAsync(h_data1, &dArray[1], sizeof(int), cudaMemcpyDeviceToHost, stream1);
-			sleep(15);
+			cout << "copied back value: " << *h_data1 << endl;			
+		sleep(1);
 			cudaMemcpyAsync(&read_complete, request_last_read, sizeof(bool), cudaMemcpyHostToDevice, stream1);
-			cout << "FRom device Array[1] read: " << *h_data1 << endl;
+			cout << "copied value got cmd" << endl;
+			//cout << "FRom device Array[1] read: " << *h_data1 << endl;
 
 
 
