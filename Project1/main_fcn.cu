@@ -139,8 +139,23 @@ int main()
 
 			bool k_stop_cmd = 1;
 			bool *host_stop_kernel = &k_stop_cmd;
+			bool request_last_read_cmd = 1;
+			bool *request_last_read = &request_last_read_cmd;
+			int *h_data1;
+
+			cout << "Trying to read values from Helper kernel before stopping " << endl;
+			cudaMemcpyAsync(&request_read, request_last_read, sizeof(bool), cudaMemcpyHostToDevice, stream1);
+			sleep(15);
+			cudaMemcpyAsync(h_data1, &dArray[1], sizeof(int), cudaMemcpyDeviceToHost, stream1);
+			sleep(15);
+			cudaMemcpyAsync(&read_complete, request_last_read, sizeof(bool), cudaMemcpyHostToDevice, stream1);
+			cout << "FRom device Array[1] read: " << *h_data1 << endl;
+
+
+
 			cout <<"Trying to Stop Helper Kernel" << endl;
 			cudaMemcpyAsync(&stop_kernel, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice, stream1);
+			
 
 			cout << "Copying values from helper kernel to base (but they may be garbage!!!!!" << endl;
 			cudaMemcpy(&hostArray, dArray_Held, sizeof(int)*numElems, cudaMemcpyDeviceToHost);
@@ -272,12 +287,12 @@ __global__ void dataKernel( int* data, int size, int* data_held){
 			else
 				data[thid] = data[thid]-100;
 			if(*stop_kernel == 1){
-					__threadfence();
+					__syncthreads();
 
 					asm("trap;");
 					}
 			if(*request_read == 1){
-					__threadfence();
+					__syncthreads();
 					if(thid == 0)
 						*ready_to_read = 1;
 					while(*read_complete == 0)
@@ -296,9 +311,9 @@ __global__ void dataKernel( int* data, int size, int* data_held){
 
 __global__ void monitorKernel(int * write_2_ptr,  int * read_in_ptr){
 	*request_read = 1;
-	int temp = 0;
+
 	while(*ready_to_read == 0)
-		temp = temp+1;
+		{}
 	*write_2_ptr = *read_in_ptr;
 	*read_complete =1;
 	*ready_to_read = 0;
