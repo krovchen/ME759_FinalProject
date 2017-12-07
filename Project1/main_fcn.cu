@@ -9,7 +9,10 @@ using namespace std;
 //global variables
 const bool allow_interrupt = 0;
 const int N = 5;
-__device__ bool *stop_kernel =0;
+__device__ volatile bool *stop_kernel =0;
+__device__ volatile bool *request_read = 0;
+__device__ volatile bool *ready_to_read = 0;
+__device__ volatile bool *read_complete = 0;
 
 struct help_input_from_main{
 	static const int length = N;
@@ -98,6 +101,9 @@ int main()
 			//bool *stop_kern_ptr = &stop_kernel;
 		
 			cudaMalloc(&stop_kernel, sizeof(bool));
+			cudaMalloc(&request_read, sizeof(bool));
+			cudaMalloc(&read_complete, sizeof(bool));
+			cudaMalloc(&ready_to_read, sizeof(bool));
 			cudaMalloc((void**)&dArray, sizeof(int)*numElems);
 			cudaMalloc((void**)&dArray_Held, sizeof(int)*numElems);
 			cudaMemset(dArray, 0, numElems*sizeof(int));
@@ -131,8 +137,8 @@ int main()
 				}	
 			}
 
-			bool stop_kernel = 1;
-			bool *host_stop_kernel = &stop_kernel;
+			bool k_stop_cmd = 1;
+			bool *host_stop_kernel = &k_stop_cmd;
 			cout <<"Trying to Stop Helper Kernel" << endl;
 			cudaMemcpyAsync(&stop_kernel, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice, stream1);
 
@@ -255,7 +261,8 @@ return 1;
 __global__ void dataKernel( int* data, int size, int* data_held){
 //this adds a value to a variable stored in global memory
 	int thid = threadIdx.x+blockIdx.x*blockDim.x;
-	int i = 0;
+
+	
 	if(thid < size){
 		data_held[thid] = (blockIdx.x+ threadIdx.x);
 		data[thid] = (blockIdx.x+ threadIdx.x);
@@ -269,8 +276,16 @@ __global__ void dataKernel( int* data, int size, int* data_held){
 
 					asm("trap;");
 					}
-					
-	
+			if(*request_read == 1){
+					__threadfence();
+					if(thid == 0)
+						*ready_to_read = 1;
+					while(*read_complete == 0)
+						{}
+
+					*request_read = 0;
+					*read_complete = 0;
+			}			
 
 
 		}
@@ -280,8 +295,13 @@ __global__ void dataKernel( int* data, int size, int* data_held){
 
 
 __global__ void monitorKernel(int * write_2_ptr,  int * read_in_ptr){
+	*request_read = 1;
+	int temp = 0;
+	while(*ready_to_read == 0)
+		temp = temp+1;
 	*write_2_ptr = *read_in_ptr;
-
+	*read_complete =1;
+	*ready_to_read = 0;
 
 }
 
