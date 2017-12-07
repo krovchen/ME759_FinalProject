@@ -142,15 +142,18 @@ int main()
 			bool request_last_read_cmd = 1;
 			bool *request_last_read = &request_last_read_cmd;
 			int *h_data1;
-
+			cudaStreamSynchronize(stream1);
 			cout << "Trying to read values from Helper kernel before stopping " << endl;
 			cudaMemcpyAsync(&request_read, request_last_read, sizeof(bool), cudaMemcpyHostToDevice, stream1);
+			cudaStreamSynchronize(stream1);
 			sleep(1);
 			cout << "copied req comd" << endl;
 			cudaMemcpyAsync(h_data1, &dArray[1], sizeof(int), cudaMemcpyDeviceToHost, stream1);
+			cudaStreamSynchronize(stream1);
 			cout << "copied back value: " << *h_data1 << endl;			
 		sleep(1);
 			cudaMemcpyAsync(&read_complete, request_last_read, sizeof(bool), cudaMemcpyHostToDevice, stream1);
+			cudaStreamSynchronize(stream1);
 			cout << "copied value got cmd" << endl;
 			//cout << "FRom device Array[1] read: " << *h_data1 << endl;
 
@@ -158,7 +161,7 @@ int main()
 
 			cout <<"Trying to Stop Helper Kernel" << endl;
 			cudaMemcpyAsync(&stop_kernel, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice, stream1);
-			
+			cudaStreamSynchronize(stream1);
 
 			cout << "Copying values from helper kernel to base (but they may be garbage!!!!!" << endl;
 			cudaMemcpy(&hostArray, dArray_Held, sizeof(int)*numElems, cudaMemcpyDeviceToHost);
