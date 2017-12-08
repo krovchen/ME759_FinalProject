@@ -74,7 +74,7 @@ int main()
 
 	cudaGetSymbolAddress((void**)&stop_kern_ptr, stop_kernel);
 	cout << "ADDRESs Of stop_kernel = " << stop_kern_ptr << endl;
-	cout << "Dereferenced stop kernel = " << *stop_kern_ptr << endl;
+	//cout << "Dereferenced stop kernel = " << *stop_kern_ptr << endl;
 	//cudaMalloc((void**)&dVal, sizeof(int));
 	cudaMalloc((void**)&dVal, sizeof(int));
 		
