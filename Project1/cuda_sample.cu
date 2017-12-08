@@ -12,6 +12,8 @@ __device__ volatile bool *read_complete = 0;
 __global__ void dataKernel( int* data){
 //this adds a value to a variable stored in global memory
 	*data = 3;
+	}
+/*
 	while(1){
 		if(*stop_kernel == 1){
 			*data = 4;
@@ -32,7 +34,7 @@ __global__ void dataKernel( int* data){
 		
 	}
 
-}
+}*/
 
 
 __global__ void monitorKernel(int * write_2_ptr,  int * read_in_ptr){
@@ -71,6 +73,9 @@ int main()
 	cudaStreamCreate(&stream1);
 	
 	dataKernel<<<1, 1>>>(dVal);
+		cudaMemcpy(h_data, dVal, sizeof(int), cudaMemcpyDeviceToHost);
+	cout << "Value copied over: "  << *h_data << endl;
+return 0;
 	cout <<"Launching Monitor Kernel" << endl;
 	cudaStreamSynchronize(stream1);
 	monitorKernel<<<1, 1,0, stream1>>>(monitor_data, dVal);
