@@ -12,8 +12,8 @@ __device__ volatile bool *read_complete = 0;
 __global__ void dataKernel( int* data){
 //this adds a value to a variable stored in global memory
 	*data = 3;
-//	if(*stop_kernel == 1)
-//		*data = 4;
+	if(*stop_kernel == 1)
+		*data = 4;
 	}
 /*
 	while(1){
@@ -60,27 +60,27 @@ int main()
 	int transfered_data;
 	int *h_data = &transfered_data;
 	int *monitor_data;
-
+		bool k_stop_cmd = 1;
+	bool *host_stop_kernel = &k_stop_cmd;
 	cudaError_t cErr;
 	//bool *stop_kern_ptr = &stop_kernel;
 		
-	//cErr = cudaMalloc((void**)&stop_kernel, size);
+	cErr = cudaMalloc((void**)&stop_kernel, size);
 
-
+	cudaMalloc((void**)&dVal, sizeof(int));
 
 		
 	//cout << "Cuda Error: " << cErr << endl;	
 
-	//cout <<"Trying to Stop Helper Kernel" << endl;
-	//cudaMemcpy(&stop_kernel, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice);
+	cout <<"Trying to Stop Helper Kernel" << endl;
+	cudaMemcpy(&stop_kernel, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice);
 	//cudaStreamSynchronize(stream1);
 	dataKernel<<<1, 1>>>(dVal);
 	cudaMemcpy(h_data, dVal, sizeof(int), cudaMemcpyDeviceToHost);
 	cout << "Value copied over: "  << *h_data << endl;
 return 0;
 
-		bool k_stop_cmd = 1;
-	bool *host_stop_kernel = &k_stop_cmd;
+
 	cudaStream_t stream1;
 	cudaStreamCreate(&stream1);
 
@@ -88,7 +88,7 @@ return 0;
 	cudaMalloc(&request_read, sizeof(bool));
 	cudaMalloc(&read_complete, sizeof(bool));
 	cudaMalloc(&ready_to_read, sizeof(bool));
-	cudaMalloc((void**)&dVal, sizeof(int));
+	
 	cudaMallocHost((void**)&monitor_data, sizeof(int));
 
 	cout <<"Launching Monitor Kernel" << endl;
