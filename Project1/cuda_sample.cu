@@ -11,7 +11,7 @@ __device__ volatile bool *read_complete = 0;
 
 __global__ void dataKernel( int* data){
 //this adds a value to a variable stored in global memory
-	*data = 3;
+	*data = *stop_kernel;
 	if(*stop_kernel == 1)
 		*data = 4;
 	}
