@@ -65,7 +65,10 @@ int main()
 	cudaError_t cErr;
 	//bool *stop_kern_ptr = &stop_kernel;
 		
-	//cErr = cudaMalloc((void**)&stop_kernel, size);
+	cErr = cudaMallocHost((void**)&host_stop_kernel, size);
+	cout << "Cuda Error: " << cErr << endl;	
+	cErr = cudaMalloc((void**)&stop_kernel, size);
+	cout << "Cuda Error: " << cErr << endl;	
 
 	//cudaMalloc((void**)&dVal, sizeof(int));
 	cudaMalloc((void**)&dVal, sizeof(int));
