@@ -9,7 +9,7 @@ __device__ static bool *request_read = 0;
 __device__ static bool *ready_to_read = 0;
 __device__ static bool *read_complete = 0;
 
-__global__ void dataKernel( int* data, bool* stop)//, bool* req_red, bool *r2r, bool *rdc){
+__global__ void dataKernel( int* data, bool* stop){//, bool* req_red, bool *r2r, bool *rdc){
 //this adds a value to a variable stored in global memory
 
 	*data = 3;
