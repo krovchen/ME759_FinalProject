@@ -5,31 +5,31 @@ using namespace std;
 
 
 __device__ static bool *stop_kernel =0;
-__device__ volatile bool *request_read = 0;
-__device__ volatile bool *ready_to_read = 0;
-__device__ volatile bool *read_complete = 0;
+__device__ static bool *request_read = 0;
+__device__ static bool *ready_to_read = 0;
+__device__ static bool *read_complete = 0;
 
-__global__ void dataKernel( int* data, bool* stop){
+__global__ void dataKernel( int* data, bool* stop, bool* req_red, bool *r2r, bool *rdc){
 //this adds a value to a variable stored in global memory
 
 	*data = 3;
 	if(*stop == 1)
 		*data = 4;
-	}
-/*
+	
+
 	while(1){
-		if(*stop_kernel == 1){
-			*data = 4;
+		if(*stop == 1){
+			*data = 6;
 			__syncthreads();
 			asm("trap;");
 		}
-		if(*request_read == 1){
+		if(*req_red == 1){
 			__syncthreads();
 			*ready_to_read = 1;
-			while(*read_complete == 0)
+			while(*rdc == 0)
 			{}
-			*request_read = 0;
-			*read_complete = 0;
+			*r2r = 0;
+			*rdc = 0;
 			*data = 5;
 		}			
 
@@ -37,17 +37,17 @@ __global__ void dataKernel( int* data, bool* stop){
 		
 	}
 
-}*/
+}
 
 
-__global__ void monitorKernel(int * write_2_ptr,  int * read_in_ptr){
-	*request_read = 1;
+__global__ void monitorKernel(int * write_2_ptr,  int * read_in_ptr, bool* req_rd, bool *r2r, bool *rc){
+	*req_rd = 1;
 
-	while(*ready_to_read == 0)
+	while(*r2r == 0)
 		{}
 	*write_2_ptr = *read_in_ptr;
-	*read_complete =1;
-	*ready_to_read = 0;
+	*rc =1;
+	*r2r = 0;
 
 }
 
@@ -67,15 +67,23 @@ int main()
 	bool bool_test = 0;
 	bool *test_value = &bool_test;
 	bool *stop_kern_ptr;
-	cudaError_t cErr;
-	//bool *stop_kern_ptr = &stop_kernel;
-		
-	cErr = cudaMallocHost((void**)&host_stop_kernel, size);
+	bool *request_read_ptr;
+	bool *read_to_read_ptr;
+	bool *read_complete_ptr;
+	
+	cudaMallocHost((void**)&host_stop_kernel, size);
 	*host_stop_kernel = 1;
-	//cout << "*host_stop_kernel: " << *host_stop_kernel << endl;	
-	cErr = cudaMalloc((void**)&stop_kernel, size);
+
+	cudaMalloc((void**)&stop_kernel, size);
+	cudaMalloc((void**)&request_read, size);
+	cudaMalloc((void**)&ready_to_read, size);
+	cudaMalloc((void**)&read_complete, size);
 
 	cudaGetSymbolAddress((void**)&stop_kern_ptr, stop_kernel);
+	cudaGetSymbolAddress((void**)&request_read_ptr, request_read);
+	cudaGetSymbolAddress((void**)&read_to_read_ptr, ready_to_read);
+	cudaGetSymbolAddress((void**)&read_complete_ptr, read_complete);
+
 	cout << "ADDRESs Of stop_kernel = " << stop_kern_ptr << endl;
 	//cout << "Dereferenced stop kernel = " << *stop_kern_ptr << endl;
 	//cudaMalloc((void**)&dVal, sizeof(int));
@@ -83,36 +91,49 @@ int main()
 		
 	//cout << "Cuda Error: " << cErr << endl;	
 
-	cout <<"Trying to Stop Helper Kernel" << endl;
+	
 	//cudaMemcpyToSymbol(stop_kernel, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice);
-	cout << "Copying " << *host_stop_kernel << " from the address: " << host_stop_kernel << "to: " << stop_kern_ptr << endl;
+	/*cout << "Copying " << *host_stop_kernel << " from the address: " << host_stop_kernel << "to: " << stop_kern_ptr << endl;
 	cudaMemcpy(stop_kern_ptr, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice);
 cout <<"COPIED MEM DO DEVICE" << endl;
 	cout << "Copying from" << stop_kern_ptr << "to: " << &test_value << endl;
 	
 	cudaMemcpy(test_value, stop_kern_ptr, sizeof(bool), cudaMemcpyDeviceToHost);
 	cout << "Test value = : " << test_value << endl;
-	cout << "if stop_kernel in global memory of device then this better be 1: " << *test_value << endl;
+	cout << "if stop_kernel in global memory of device then this better be 1: " << *test_value << endl;*/
 	//cudaStreamSynchronize(stream1);
-	dataKernel<<<1, 1>>>(dVal, stop_kern_ptr);
+	dataKernel<<<1, 1>>>(dVal, stop_kern_ptr, request_read_ptr, read_to_read_ptr, read_complete_ptr);
+
+
+
+	cudaStream_t stream1;
+	cudaStreamCreate(&stream1);
+	cudaMallocHost((void**)&monitor_data, sizeof(int));
+	cout <<"Launching Monitor Kernel" << endl;
+	cudaStreamSynchronize(stream1);
+	monitorKernel<<<1, 1,0, stream1>>>(monitor_data, dVal, request_read_ptr, read_to_read_ptr, read_complete_ptr);
+	cout <<"Launching Async Mem Cpy" << endl;
+	cudaMemcpyAsync(h_data, monitor_data, sizeof(int), cudaMemcpyDeviceToHost, stream1);
+	cudaStreamSynchronize(stream1);
+	cout << "Value monitored: "  << *h_data << endl;
+cout << "Copying " << *host_stop_kernel << " from the address: " << host_stop_kernel << "to: " << stop_kern_ptr << endl;
+	cudaMemcpy(stop_kern_ptr, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice);
+cout <<"COPIED MEM DO DEVICE" << endl;
 	cudaMemcpy(h_data, dVal, sizeof(int), cudaMemcpyDeviceToHost);
 	cout << "Value copied over: "  << *h_data << endl;
 return 0;
 
 
-	cudaStream_t stream1;
-	cudaStreamCreate(&stream1);
+
 
 
 	cudaMalloc(&request_read, sizeof(bool));
 	cudaMalloc(&read_complete, sizeof(bool));
 	cudaMalloc(&ready_to_read, sizeof(bool));
 	
-	cudaMallocHost((void**)&monitor_data, sizeof(int));
+	
 
-	cout <<"Launching Monitor Kernel" << endl;
-	cudaStreamSynchronize(stream1);
-	monitorKernel<<<1, 1,0, stream1>>>(monitor_data, dVal);
+
 	cout <<"Launching Async Mem Cpy" << endl;
 	cudaMemcpyAsync(h_data, monitor_data, sizeof(int), cudaMemcpyDeviceToHost, stream1);
 	cudaStreamSynchronize(stream1);
