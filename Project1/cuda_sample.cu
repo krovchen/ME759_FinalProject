@@ -14,7 +14,7 @@ __global__ void dataKernel( int* data){
 	*data = 3;
 //	if(*stop_kernel == 1)
 //		*data = 4;
-//	}
+	}
 /*
 	while(1){
 		if(*stop_kernel == 1){
