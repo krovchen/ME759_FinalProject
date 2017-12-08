@@ -9,10 +9,11 @@ __device__ volatile bool *request_read = 0;
 __device__ volatile bool *ready_to_read = 0;
 __device__ volatile bool *read_complete = 0;
 
-__global__ void dataKernel( int* data){
+__global__ void dataKernel( int* data, bool* stop){
 //this adds a value to a variable stored in global memory
-	*data = *stop_kernel;
-	if(*stop_kernel == 1)
+
+	*data = 3;
+	if(*stop == 1)
 		*data = 4;
 	}
 /*
@@ -93,7 +94,7 @@ cout <<"COPIED MEM DO DEVICE" << endl;
 	cout << "Test value = : " << test_value << endl;
 	cout << "if stop_kernel in global memory of device then this better be 1: " << *test_value << endl;
 	//cudaStreamSynchronize(stream1);
-	dataKernel<<<1, 1>>>(dVal);
+	dataKernel<<<1, 1>>>(dVal, stop_kern_ptr);
 	cudaMemcpy(h_data, dVal, sizeof(int), cudaMemcpyDeviceToHost);
 	cout << "Value copied over: "  << *h_data << endl;
 return 0;
