@@ -68,9 +68,8 @@ int main()
 	//bool *stop_kern_ptr = &stop_kernel;
 		
 	cErr = cudaMallocHost((void**)&host_stop_kernel, size);
-	cout << "Cuda Error: " << cErr << endl;	
+	cout << "*host_stop_kernel: " << *host_stop_kernel << endl;	
 	cErr = cudaMalloc((void**)&stop_kernel, size);
-	cout << "Cuda Error: " << cErr << endl;	
 
 	cudaGetSymbolAddress((void**)&stop_kern_ptr, stop_kernel);
 	cout << "ADDRESs Of stop_kernel = " << stop_kern_ptr << endl;
