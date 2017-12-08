@@ -62,6 +62,13 @@ int main()
 	int *monitor_data;
 	bool k_stop_cmd = 1;
 	bool *host_stop_kernel = &k_stop_cmd;
+
+	cout << "k_stop_cmd: " << k_stop_cmd << endl;
+	cout << "*host_stop_kernel" << *host_stop_kernel << endl;
+	*host_stop_kernel = 1;
+	cout << "set *host_stop kernel=1" << endl;
+	cout << "k_stop_cmd: " << k_stop_cmd << endl;
+	cout << "*host_stop_kernel" << *host_stop_kernel << endl;
 	bool *test_value;
 	bool *stop_kern_ptr;
 	cudaError_t cErr;
