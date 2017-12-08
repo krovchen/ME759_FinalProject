@@ -77,8 +77,8 @@ int main()
 	//cout << "Cuda Error: " << cErr << endl;	
 
 	cout <<"Trying to Stop Helper Kernel" << endl;
-	cudaMemcpy(&stop_kernel, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice);
-	cudaMemcpy(&test_value, &stop_kernel, sizeof(bool), cudaMemcpyDeviceToHost);
+	cudaMemcpy(stop_kernel, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice);
+	cudaMemcpy(test_value, stop_kernel, sizeof(bool), cudaMemcpyDeviceToHost);
 	cout << "if stop_kernel in global memory of device then this better be 1: " << *test_value << endl;
 	//cudaStreamSynchronize(stream1);
 	dataKernel<<<1, 1>>>(dVal);
