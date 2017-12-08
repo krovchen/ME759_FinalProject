@@ -62,6 +62,7 @@ int main()
 	int *monitor_data;
 	bool k_stop_cmd = 1;
 	bool *host_stop_kernel = &k_stop_cmd;
+	bool *test_value;
 	cudaError_t cErr;
 	//bool *stop_kern_ptr = &stop_kernel;
 		
@@ -77,6 +78,8 @@ int main()
 
 	cout <<"Trying to Stop Helper Kernel" << endl;
 	cudaMemcpy(&stop_kernel, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice);
+	cudaMemcpy(&test_value, &stop_kernel, sizeof(bool), cudaMemcpyDeviceToHost);
+	cout << "if stop_kernel in global memory of device then this better be 1: " << *test_value << endl;
 	//cudaStreamSynchronize(stream1);
 	dataKernel<<<1, 1>>>(dVal);
 	cudaMemcpy(h_data, dVal, sizeof(int), cudaMemcpyDeviceToHost);
