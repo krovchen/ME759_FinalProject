@@ -121,12 +121,13 @@ int main()
 	cout <<"Launching Async Mem Cpy" << endl;
 	cudaMemcpyAsync(h_data, monitor_data, sizeof(int), cudaMemcpyDeviceToHost, stream1);
 	cout << "Value monitored over: "  << *h_data << endl;
-
-
-	cudaMemcpyAsync(stop_kern_ptr, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice, stream1);
-	cout << "launched mem cpy async" << endl;
 	cudaStreamSynchronize(stream1);
-	cout << "synchronized w/ stream 1" << endl;
+
+	sleep(2);
+	cout << "Stopping Kernel" << endl;
+	cudaMemcpyAsync(stop_kern_ptr, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice, stream1);
+	
+	
 	cudaMemcpy(test_value, stop_kern_ptr, sizeof(bool), cudaMemcpyDeviceToHost);
 	cout << "if stop_kernel in global memory of device then this better be 1: " << *test_value << endl;
 
