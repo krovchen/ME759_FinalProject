@@ -90,6 +90,7 @@ cout <<"COPIED MEM DO DEVICE" << endl;
 	cout << "Copying from" << stop_kern_ptr << "to: " << &test_value << endl;
 	
 	cudaMemcpy(&test_value, stop_kern_ptr, sizeof(bool), cudaMemcpyDeviceToHost);
+	cout << "Test value = : " << test_value << endl;
 	cout << "if stop_kernel in global memory of device then this better be 1: " << *test_value << endl;
 	//cudaStreamSynchronize(stream1);
 	dataKernel<<<1, 1>>>(dVal);
