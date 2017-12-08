@@ -73,14 +73,20 @@ int main()
 	cout << "Cuda Error: " << cErr << endl;	
 
 	cudaGetSymbolAddress((void**)&stop_kern_ptr, stop_kernel);
+	cout << "ADDRESs Of stop_kernel = " << stop_kern_ptr << endl;
+	cout << "Dereferenced stop kernel = " << *stop_kern_ptr << endl;
 	//cudaMalloc((void**)&dVal, sizeof(int));
 	cudaMalloc((void**)&dVal, sizeof(int));
 		
 	//cout << "Cuda Error: " << cErr << endl;	
 
 	cout <<"Trying to Stop Helper Kernel" << endl;
+	//cudaMemcpyToSymbol(stop_kernel, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice);
+	cout << "Copying " << *host_stop_kernel << " from the address: " << host_stop_kernel << "to: " << stop_kern_ptr << endl;
 	cudaMemcpy(stop_kern_ptr, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice);
 cout <<"COPIED MEM DO DEVICE" << endl;
+	cout << "Copying from" << stop_kern_ptr << "to: " << &test_value << endl;
+	
 	cudaMemcpy(&test_value, stop_kern_ptr, sizeof(bool), cudaMemcpyDeviceToHost);
 	cout << "if stop_kernel in global memory of device then this better be 1: " << *test_value << endl;
 	//cudaStreamSynchronize(stream1);
