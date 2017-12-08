@@ -54,6 +54,7 @@ int main()
 {
 
 	int *dVal;
+	int size = sizeof(bool);
 
 	//pointer of helper function return	
 	int transfered_data;
@@ -63,13 +64,10 @@ int main()
 	cudaError_t cErr;
 	//bool *stop_kern_ptr = &stop_kernel;
 		
-	cErr = cudaMalloc(&stop_kernel, sizeof(bool));
-	cudaMalloc(&request_read, sizeof(bool));
-	cudaMalloc(&read_complete, sizeof(bool));
-	cudaMalloc(&ready_to_read, sizeof(bool));
-	cudaMalloc((void**)&dVal, sizeof(int));
+	cErr = cudaMalloc((void**)&stop_kernel, size);
 
-	cudaMallocHost((void**)&monitor_data, sizeof(int));
+
+
 		
 	cout << "Cuda Error: " << cErr << endl;	
 	bool k_stop_cmd = 1;
@@ -83,6 +81,15 @@ int main()
 	cudaMemcpy(h_data, dVal, sizeof(int), cudaMemcpyDeviceToHost);
 	cout << "Value copied over: "  << *h_data << endl;
 return 0;
+
+
+
+	cudaMalloc(&request_read, sizeof(bool));
+	cudaMalloc(&read_complete, sizeof(bool));
+	cudaMalloc(&ready_to_read, sizeof(bool));
+	cudaMalloc((void**)&dVal, sizeof(int));
+	cudaMallocHost((void**)&monitor_data, sizeof(int));
+
 	cout <<"Launching Monitor Kernel" << endl;
 	cudaStreamSynchronize(stream1);
 	monitorKernel<<<1, 1,0, stream1>>>(monitor_data, dVal);
