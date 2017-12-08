@@ -112,7 +112,7 @@ int main()
 
 	//cudaStreamSynchronize(stream1);
 	cudaStream_t stream1;
-	cudaStreamCreate(&stream1);
+	cudaStreamCreateWithFlags(&stream1, cudaStreamNonBlocking);
 	
 	dataKernel<<<1, 1>>>(dVal, stop_kern_ptr, request_read_ptr, read_to_read_ptr, read_complete_ptr);
 	sleep(1);
@@ -125,18 +125,10 @@ int main()
 
 	cudaMemcpyAsync(stop_kern_ptr, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice, stream1);
 	cout << "launched mem cpy async" << endl;
-	//cudaStreamSynchronize(stream1);
-	//cout << "synchronized w/ stream 1" << endl;
+	cudaStreamSynchronize(stream1);
+	cout << "synchronized w/ stream 1" << endl;
 	cudaMemcpy(test_value, stop_kern_ptr, sizeof(bool), cudaMemcpyDeviceToHost);
 	cout << "if stop_kernel in global memory of device then this better be 1: " << *test_value << endl;
-
-
-
-
-
-
-
-
 
 
 
