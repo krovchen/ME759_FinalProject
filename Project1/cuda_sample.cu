@@ -76,7 +76,7 @@ int main()
 	cudaStreamCreate(&stream1);
 	cout <<"Trying to Stop Helper Kernel" << endl;
 	cudaMemcpy(&stop_kernel, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice);
-	cudaStreamSynchronize(stream1);
+	//cudaStreamSynchronize(stream1);
 	dataKernel<<<1, 1>>>(dVal);
 	cudaMemcpy(h_data, dVal, sizeof(int), cudaMemcpyDeviceToHost);
 	cout << "Value copied over: "  << *h_data << endl;
