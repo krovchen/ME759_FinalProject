@@ -130,10 +130,6 @@ cout <<"COPIED MEM DO DEVICE" << endl;
 return 0;
 
 
-	cudaStream_t stream1;
-	cudaStreamCreate(&stream1);
-	cudaMallocHost((void**)&monitor_data, sizeof(int));
-	cout <<"Launching Monitor Kernel" << endl;
 	cudaStreamSynchronize(stream1);
 
 	cout <<"Launching Async Mem Cpy" << endl;
