@@ -77,8 +77,22 @@ int main()
 	cout <<"Launching Async Mem Cpy" << endl;
 	cudaMemcpyAsync(h_data, monitor_data, sizeof(int), cudaMemcpyDeviceToHost, stream1);
 	cudaStreamSynchronize(stream1);
+	
+	cout << "Value monitored: "  << *h_data << endl;
+	bool k_stop_cmd = 1;
+	bool *host_stop_kernel = &k_stop_cmd;
+	cout <<"Trying to Stop Helper Kernel" << endl;
+	cudaMemcpyAsync(&stop_kernel, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice, stream1);
+	cudaStreamSynchronize(stream1);
+	cudaMemcpy(h_data, dVal, sizeof(int), cudaMemcpyDeviceToHost);
+	cout << "Value copied over: "  << *h_data << endl;
 
-	cout << h_data << endl;
+	cudaFree(dVal);
+	cudaFree(&stop_kernel);
+	cudaFree(&request_read);
+	cudaFree(&read_complete);
+	cudaFree(&ready_to_read);
+	
 	return 0;
 	/*
 cudaMemcpy(&hostArray, dArray, sizeof(int)*numElems, cudaMemcpyDeviceToHost);
