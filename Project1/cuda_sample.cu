@@ -4,7 +4,7 @@
 using namespace std;
 
 
-__device__ bool *stop_kernel =0;
+__device__ static bool *stop_kernel =0;
 __device__ volatile bool *request_read = 0;
 __device__ volatile bool *ready_to_read = 0;
 __device__ volatile bool *read_complete = 0;
@@ -63,6 +63,7 @@ int main()
 	bool k_stop_cmd = 1;
 	bool *host_stop_kernel = &k_stop_cmd;
 	bool *test_value;
+	bool *stop_kern_ptr;
 	cudaError_t cErr;
 	//bool *stop_kern_ptr = &stop_kernel;
 		
@@ -71,14 +72,15 @@ int main()
 	cErr = cudaMalloc((void**)&stop_kernel, size);
 	cout << "Cuda Error: " << cErr << endl;	
 
+	cudaGetSymbolAddress((void**)&stop_kern_ptr, stop_kernel);
 	//cudaMalloc((void**)&dVal, sizeof(int));
 	cudaMalloc((void**)&dVal, sizeof(int));
 		
 	//cout << "Cuda Error: " << cErr << endl;	
 
 	cout <<"Trying to Stop Helper Kernel" << endl;
-	cudaMemcpy(stop_kernel, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice);
-	cudaMemcpy(test_value, stop_kernel, sizeof(bool), cudaMemcpyDeviceToHost);
+	cudaMemcpy(&stop_kern_ptr, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice);
+	cudaMemcpy(&test_value, stop_kern_ptr, sizeof(bool), cudaMemcpyDeviceToHost);
 	cout << "if stop_kernel in global memory of device then this better be 1: " << *test_value << endl;
 	//cudaStreamSynchronize(stream1);
 	dataKernel<<<1, 1>>>(dVal);
