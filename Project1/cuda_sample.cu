@@ -15,7 +15,7 @@ __global__ void dataKernel( int* data, bool* stop, bool* req_red, bool *r2r, boo
 	*data = 3;
 	if(*stop == 1){
 		*data = 4;
-		*stop = 0;}	
+		*rdc = 1;}	
 }
 /*
 	while(1){
@@ -43,9 +43,9 @@ __global__ void dataKernel( int* data, bool* stop, bool* req_red, bool *r2r, boo
 
 __global__ void monitorKernel(int * write_2_ptr,  int * read_in_ptr, bool* req_rd, bool *r2r, bool *rc){
 	
-	if(*stop == 0){
-		*req_rd = 1;
-		*stop = 1;
+	if(*rc == 1){
+		
+		*rc = 0;
 	}
 	/*
 	*req_rd = 1;
@@ -101,17 +101,17 @@ int main()
 
 	
 	//cudaMemcpyToSymbol(stop_kernel, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice);
-	cout << "Copying " << *host_stop_kernel << " from the address: " << host_stop_kernel << "to: " << stop_kern_ptr << endl;
-	cudaMemcpy(stop_kern_ptr, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice);
-cout <<"COPIED MEM DO DEVICE" << endl;
-	cout << "Copying from" << stop_kern_ptr << "to: " << &test_value << endl;
-	
-	cudaMemcpy(test_value, stop_kern_ptr, sizeof(bool), cudaMemcpyDeviceToHost);
 
+	cudaMemcpy(stop_kern_ptr, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice);
+
+	cudaMemcpy(test_value, stop_kern_ptr, sizeof(bool), cudaMemcpyDeviceToHost);
 	cout << "if stop_kernel in global memory of device then this better be 1: " << *test_value << endl;
+
 	//cudaStreamSynchronize(stream1);
 	dataKernel<<<1, 1>>>(dVal, stop_kern_ptr, request_read_ptr, read_to_read_ptr, read_complete_ptr);
 
+	cudaMemcpy(test_value, read_complete_ptr, sizeof(bool), cudaMemcpyDeviceToHost);
+	cout << "if stop_kernel in global memory of device then this better be 1: " << *test_value << endl;
 
 	cudaStream_t stream1;
 	cudaStreamCreate(&stream1);
@@ -119,13 +119,13 @@ cout <<"COPIED MEM DO DEVICE" << endl;
 	cout <<"Launching Monitor Kernel" << endl;
 
 	monitorKernel<<<1, 1,0, stream1>>>(monitor_data, dVal, request_read_ptr, read_to_read_ptr, read_complete_ptr);
-	cudaMemcpy(test_value, stop_kern_ptr, sizeof(bool), cudaMemcpyDeviceToHost);
+	cudaMemcpy(test_value, read_complete_ptr, sizeof(bool), cudaMemcpyDeviceToHost);
 	cout << "if stop_kernel in global memory of device then this better be 0: " << *test_value << endl;
+
+
+
+
 	cudaMemcpy(h_data, dVal, sizeof(int), cudaMemcpyDeviceToHost);
-
-	cudaMemcpy(test_value, request_read_ptr, sizeof(bool), cudaMemcpyDeviceToHost);
-	cout << "if stop_kernel in global memory of device then this better be 1: " << *test_value << endl;
-
 	cout << "Value copied over: "  << *h_data << endl;
 return 0;
 
