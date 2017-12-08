@@ -60,16 +60,18 @@ int main()
 	int *h_data = &transfered_data;
 	int *monitor_data;
 
+	cudaError_t cErr;
 	//bool *stop_kern_ptr = &stop_kernel;
 		
-	cudaMalloc(&stop_kernel, sizeof(bool));
+	cErr = cudaMalloc(&stop_kernel, sizeof(bool));
 	cudaMalloc(&request_read, sizeof(bool));
 	cudaMalloc(&read_complete, sizeof(bool));
 	cudaMalloc(&ready_to_read, sizeof(bool));
 	cudaMalloc((void**)&dVal, sizeof(int));
 
 	cudaMallocHost((void**)&monitor_data, sizeof(int));
-			
+		
+	cout << "Cuda Error: " << cErr << endl;	
 	bool k_stop_cmd = 1;
 	bool *host_stop_kernel = &k_stop_cmd;
 	cudaStream_t stream1;
