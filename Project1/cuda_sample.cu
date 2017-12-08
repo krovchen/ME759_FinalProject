@@ -65,7 +65,7 @@ int main()
 	cudaError_t cErr;
 	//bool *stop_kern_ptr = &stop_kernel;
 		
-	cErr = cudaMalloc((void**)&stop_kernel, size);
+	//cErr = cudaMalloc((void**)&stop_kernel, size);
 
 	cudaMalloc((void**)&dVal, sizeof(int));
 
@@ -73,7 +73,7 @@ int main()
 	//cout << "Cuda Error: " << cErr << endl;	
 
 	cout <<"Trying to Stop Helper Kernel" << endl;
-	cudaMemcpy(&stop_kernel, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice);
+	//cudaMemcpy(&stop_kernel, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice);
 	//cudaStreamSynchronize(stream1);
 	dataKernel<<<1, 1>>>(dVal);
 	cudaMemcpy(h_data, dVal, sizeof(int), cudaMemcpyDeviceToHost);
