@@ -12,8 +12,8 @@ __device__ volatile bool *read_complete = 0;
 __global__ void dataKernel( int* data){
 //this adds a value to a variable stored in global memory
 	*data = 3;
-	if(*stop_kernel == 1)
-		*data = 4;
+//	if(*stop_kernel == 1)
+	//	*data = 4;
 	}
 /*
 	while(1){
@@ -60,15 +60,15 @@ int main()
 	int transfered_data;
 	int *h_data = &transfered_data;
 	int *monitor_data;
-		bool k_stop_cmd = 1;
+	bool k_stop_cmd = 1;
 	bool *host_stop_kernel = &k_stop_cmd;
 	cudaError_t cErr;
 	//bool *stop_kern_ptr = &stop_kernel;
 		
 	//cErr = cudaMalloc((void**)&stop_kernel, size);
 
-	cudaMalloc((void**)&dVal, sizeof(int));
-
+	//cudaMalloc((void**)&dVal, sizeof(int));
+	cudaMalloc(dVal, sizeof(int));
 		
 	//cout << "Cuda Error: " << cErr << endl;	
 
