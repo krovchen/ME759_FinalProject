@@ -72,8 +72,8 @@ int main()
 	cout << "Cuda Error: " << cErr << endl;	
 	bool k_stop_cmd = 1;
 	bool *host_stop_kernel = &k_stop_cmd;
-	//cudaStream_t stream1;
-	//cudaStreamCreate(&stream1);
+	cudaStream_t stream1;
+	cudaStreamCreate(&stream1);
 	//cout <<"Trying to Stop Helper Kernel" << endl;
 	//cudaMemcpy(&stop_kernel, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice);
 	//cudaStreamSynchronize(stream1);
