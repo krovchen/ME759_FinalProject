@@ -63,8 +63,8 @@ int main()
 	bool k_stop_cmd = 1;
 	bool *host_stop_kernel = &k_stop_cmd;
 
-
-	bool *test_value;
+	bool bool_test = 0;
+	bool *test_value = &bool_test;
 	bool *stop_kern_ptr;
 	cudaError_t cErr;
 	//bool *stop_kern_ptr = &stop_kernel;
@@ -89,7 +89,7 @@ int main()
 cout <<"COPIED MEM DO DEVICE" << endl;
 	cout << "Copying from" << stop_kern_ptr << "to: " << &test_value << endl;
 	
-	cudaMemcpy(&test_value, stop_kern_ptr, sizeof(bool), cudaMemcpyDeviceToHost);
+	cudaMemcpy(test_value, stop_kern_ptr, sizeof(bool), cudaMemcpyDeviceToHost);
 	cout << "Test value = : " << test_value << endl;
 	cout << "if stop_kernel in global memory of device then this better be 1: " << *test_value << endl;
 	//cudaStreamSynchronize(stream1);
