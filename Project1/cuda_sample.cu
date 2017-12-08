@@ -15,7 +15,7 @@ __global__ void dataKernel( int* data, bool* stop, bool* req_red, bool *r2r, boo
 	*data = 3;
 	if(*stop == 1)
 		*data = 4;
-	}
+		*stop = 0;	}
 /*
 	while(1){
 		if(*stop == 1){
@@ -99,11 +99,13 @@ cout <<"COPIED MEM DO DEVICE" << endl;
 	cout << "Copying from" << stop_kern_ptr << "to: " << &test_value << endl;
 	
 	cudaMemcpy(test_value, stop_kern_ptr, sizeof(bool), cudaMemcpyDeviceToHost);
-	cout << "Test value = : " << test_value << endl;
+
 	cout << "if stop_kernel in global memory of device then this better be 1: " << *test_value << endl;
 	//cudaStreamSynchronize(stream1);
 	dataKernel<<<1, 1>>>(dVal, stop_kern_ptr, request_read_ptr, read_to_read_ptr, read_complete_ptr);
-
+	
+	cudaMemcpy(test_value, stop_kern_ptr, sizeof(bool), cudaMemcpyDeviceToHost);
+	cout << "if stop_kernel in global memory of device then this better be 0: " << *test_value << endl;
 	cudaMemcpy(h_data, dVal, sizeof(int), cudaMemcpyDeviceToHost);
 	cout << "Value copied over: "  << *h_data << endl;
 return 0;
