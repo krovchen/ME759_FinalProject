@@ -68,7 +68,7 @@ int main()
 	//cErr = cudaMalloc((void**)&stop_kernel, size);
 
 	//cudaMalloc((void**)&dVal, sizeof(int));
-	cudaMalloc(dVal, sizeof(int));
+	cudaMalloc((void**)&dVal, sizeof(int));
 		
 	//cout << "Cuda Error: " << cErr << endl;	
 
