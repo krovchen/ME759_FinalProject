@@ -4,7 +4,7 @@
 using namespace std;
 
 
-__device__ volatile bool *stop_kernel =0;
+__device__ bool *stop_kernel =0;
 __device__ volatile bool *request_read = 0;
 __device__ volatile bool *ready_to_read = 0;
 __device__ volatile bool *read_complete = 0;
