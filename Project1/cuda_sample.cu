@@ -1,5 +1,6 @@
 #include<cuda.h>
 #include<iostream>
+#include <unistd.h>
 
 using namespace std;
 
@@ -15,6 +16,9 @@ __global__ void dataKernel( int* data, bool* stop, bool* req_red, bool *r2r, boo
 	*data = 3;
 
 	while(1){
+		if(*data > 1000)
+			*data = 0;
+		*data = *data+1;
 		if(*stop == 1){
 			*data = 6;
 			__syncthreads();
@@ -39,6 +43,9 @@ __global__ void dataKernel( int* data, bool* stop, bool* req_red, bool *r2r, boo
 
 __global__ void monitorKernel(int * write_2_ptr,  int * read_in_ptr, bool* req_rd, bool *r2r, bool *rc){
 	
+
+
+	*write_2_ptr = *read_in_ptr;
 	if(*rc == 1){
 		
 		*rc = 0;
@@ -92,7 +99,7 @@ int main()
 	//cout << "Dereferenced stop kernel = " << *stop_kern_ptr << endl;
 	//cudaMalloc((void**)&dVal, sizeof(int));
 	cudaMalloc((void**)&dVal, sizeof(int));
-		
+	cudaMallocHost((void**)&monitor_data, sizeof(int));	
 	//cout << "Cuda Error: " << cErr << endl;	
 
 	
@@ -108,18 +115,26 @@ int main()
 	cudaStreamCreate(&stream1);
 	
 	dataKernel<<<1, 1>>>(dVal, stop_kern_ptr, request_read_ptr, read_to_read_ptr, read_complete_ptr);
+	sleep(1);
+	cout <<"Launching Monitor Kernel" << endl;
+	monitorKernel<<<1, 1,0, stream1>>>(monitor_data, dVal, request_read_ptr, read_to_read_ptr, read_complete_ptr);
+	cout <<"Launching Async Mem Cpy" << endl;
+	cudaMemcpyAsync(h_data, monitor_data, sizeof(int), cudaMemcpyDeviceToHost, stream1);
+	cout << "Value monitored over: "  << *h_data << endl;
+
+
 	cudaMemcpyAsync(stop_kern_ptr, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice, stream1);
 	cout << "launched mem cpy async" << endl;
-	cudaStreamSynchronize(stream1);
-	cout << "synchronized w/ stream 1" << endl;
+	//cudaStreamSynchronize(stream1);
+	//cout << "synchronized w/ stream 1" << endl;
 	cudaMemcpy(test_value, stop_kern_ptr, sizeof(bool), cudaMemcpyDeviceToHost);
 	cout << "if stop_kernel in global memory of device then this better be 1: " << *test_value << endl;
 
 
-	cudaMallocHost((void**)&monitor_data, sizeof(int));
-	//cout <<"Launching Monitor Kernel" << endl;
 
-	//monitorKernel<<<1, 1,0, stream1>>>(monitor_data, dVal, request_read_ptr, read_to_read_ptr, read_complete_ptr);
+
+
+
 
 
 
@@ -132,8 +147,7 @@ return 0;
 
 	
 
-	cout <<"Launching Async Mem Cpy" << endl;
-	cudaMemcpyAsync(h_data, monitor_data, sizeof(int), cudaMemcpyDeviceToHost, stream1);
+
 	cudaStreamSynchronize(stream1);
 	cout << "Value monitored: "  << *h_data << endl;
 cout << "Copying " << *host_stop_kernel << " from the address: " << host_stop_kernel << "to: " << stop_kern_ptr << endl;
