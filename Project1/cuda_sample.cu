@@ -124,9 +124,9 @@ int main()
 	cudaStreamSynchronize(stream1);
 
 	sleep(2);
-	cout << "Stopping Kernel" << endl;
+	cout << "Stopping Kernel" << *host_stop_kernel << endl;
 	cudaMemcpyAsync(stop_kern_ptr, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice, stream1);
-	
+	cudaStreamSynchronize(stream1);
 	
 	cudaMemcpy(test_value, stop_kern_ptr, sizeof(bool), cudaMemcpyDeviceToHost);
 	cout << "if stop_kernel in global memory of device then this better be 1: " << *test_value << endl;
