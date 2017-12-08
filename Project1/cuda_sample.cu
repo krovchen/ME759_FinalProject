@@ -25,7 +25,7 @@ __global__ void dataKernel( int* data, bool* stop, bool* req_red, bool *r2r, boo
 		}
 		if(*req_red == 1){
 			__syncthreads();
-			*ready_to_read = 1;
+			*r2r = 1;
 			while(*rdc == 0)
 			{}
 			*r2r = 0;
