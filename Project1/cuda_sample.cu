@@ -56,7 +56,7 @@ int main()
 	int *dVal;
 	int size = sizeof(bool);
 
-	//pointer of helper function return	
+	//pointer of helper function return	asdfasdfasdf
 	int transfered_data;
 	int *h_data = &transfered_data;
 	int *monitor_data;
