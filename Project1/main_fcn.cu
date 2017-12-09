@@ -50,7 +50,7 @@ bool help_fcn(help_input_from_main help_input, double* out);
 bool init_help(help_input_from_main help_input);
 
 //function declarations -- calc kernel and monitor kernel
-__global__ void dataKernel( int* data, int size, int* held_Data);
+__global__ void dataKernel( int* data, int size, int* held_Data, bool *stop_kern_ptr);
 __global__ void monitorKernel(int * write_2_ptr,  int * read_in_ptr);
 
 
@@ -96,21 +96,23 @@ int main()
 			int *h_data = &transfered_data;
 			int *monitor_data;
 
-			//bool *stop_kern_ptr = &stop_kernel;
+		
+
+			bool *host_stop_kernel;
 		
 			cudaMalloc(&stop_kernel, sizeof(bool));
-			cudaMalloc(&request_read, sizeof(bool));
-			cudaMalloc(&read_complete, sizeof(bool));
-			cudaMalloc(&ready_to_read, sizeof(bool));
+			cudaMallocHost((void**)&host_stop_kernel, sizeof(bool));
+			*host_stop_kernel = 0;			
+			bool *stop_kern_ptr;
+			cudaGetSymbolAddress((void**)&stop_kern_ptr, stop_kernel);
+
 			cudaMalloc((void**)&dArray, sizeof(int)*numElems);
 			cudaMalloc((void**)&dArray_Held, sizeof(int)*numElems);
 			cudaMemset(dArray, 0, numElems*sizeof(int));
 			cudaMemset(dArray_Held, 0, numElems*sizeof(int));
 			cudaMallocHost((void**)&monitor_data, sizeof(int));
-			
-
 			cudaStream_t stream1;
-			cudaStreamCreate(&stream1);
+			cudaStreamCreateWithFlags(&stream1, cudaStreamNonBlocking);
 
 
 			while(CF.main_done_cmd == 0){
@@ -120,7 +122,7 @@ int main()
 					CF.call_help_cmd = 0;
 					cout <<"Launching Helper Kernel" << endl;
 					//*help_rdy =  help_fcn(*help_input, out);
-					dataKernel<<<1, 4>>>(dArray, numElems, dArray_Held);
+					dataKernel<<<1, 4>>>(dArray, numElems, dArray_Held, stop_kern_ptr);
 				}
 				if(CF.help_running_cmd == 1 && allow_interrupt == 0 && CF.request_val_cmd == 1){	
 					cout <<"Launching Monitor Kernel" << endl;
@@ -135,12 +137,11 @@ int main()
 				}	
 			}
 
-			bool k_stop_cmd = 1;
-			bool *host_stop_kernel = &k_stop_cmd;
+			*host_stop_kernel = 1;
 
 			cout <<"Trying to Stop Helper Kernel" << endl;
-			cudaMemcpyAsync(&stop_kernel, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice, stream1);
-	
+			cudaMemcpyAsync(stop_kern_ptr, host_stop_kernel, sizeof(bool), cudaMemcpyHostToDevice, stream1);
+			cudaStreamSynchronize(stream1);
 
 			cout << "Copying values from helper kernel to base (but they may be garbage!!!!!" << endl;
 			cudaMemcpy(&hostArray, dArray_Held, sizeof(int)*numElems, cudaMemcpyDeviceToHost);
@@ -167,7 +168,7 @@ int main()
 bool main_fcn(ctrl_flags CF, int* help_out, help_input_from_main* help_input_ptr)
 {	
 	bool *call_help = CF.call_help;
-	volatile bool *help_rdy = CF.help_rdy;
+	//volatile bool *help_rdy = CF.help_rdy;
 	volatile bool *request_val = CF.request_val;
 	volatile bool *request_done = CF.request_done;
 
@@ -258,7 +259,7 @@ return 1;
 
 
 
-__global__ void dataKernel( int* data, int size, int* data_held){
+__global__ void dataKernel( int* data, int size, int* data_held, bool *stop_kern_ptr){
 //this adds a value to a variable stored in global memory
 	int thid = threadIdx.x+blockIdx.x*blockDim.x;
 
@@ -270,7 +271,7 @@ __global__ void dataKernel( int* data, int size, int* data_held){
 				data[thid] = data[thid]+.2;
 			else
 				data[thid] = data[thid]-100;
-			if(*stop_kernel == 1){
+			if(*stop_kern_ptr == 1){
 					__syncthreads();
 
 					asm("trap;");
