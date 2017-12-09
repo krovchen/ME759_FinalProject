@@ -9,10 +9,8 @@ using namespace std;
 //global variables
 const bool allow_interrupt = 0;
 const int N = 5;
-__device__ volatile bool *stop_kernel =0;
-__device__ volatile bool *request_read = 0;
-__device__ volatile bool *ready_to_read = 0;
-__device__ volatile bool *read_complete = 0;
+__device__ static bool *stop_kernel =0;
+
 
 struct help_input_from_main{
 	static const int length = N;
@@ -32,19 +30,19 @@ struct help_input_from_main{
 struct ctrl_flags{
 	bool main_done_cmd = 0;
 	bool call_help_cmd = 0;
-	bool help_rdy_cmd = 0;
-	bool help_running_cmd = 0;
-	bool interrupt_help_cmd = 0;
-	bool request_val_cmd = 0;
-	bool req_delivered_cmd = 0;
+	volatile bool help_rdy_cmd = 0;
+	volatile bool help_running_cmd = 0;
+	volatile bool interrupt_help_cmd = 0;
+	volatile bool request_val_cmd = 0;
+	volatile bool req_delivered_cmd = 0;
 	
 	bool *call_help = &call_help_cmd;
-	bool *help_rdy = &help_rdy_cmd;
+	volatile bool *help_rdy = &help_rdy_cmd;
 	bool *main_done = &main_done_cmd;
-	bool *help_running = &help_running_cmd;
-	bool *interrupt_help = &interrupt_help_cmd;
-	bool *request_val = &request_val_cmd;
-	bool *request_done = &req_delivered_cmd;};
+	volatile bool *help_running = &help_running_cmd;
+	volatile bool *interrupt_help = &interrupt_help_cmd;
+	volatile bool *request_val = &request_val_cmd;
+	volatile bool *request_done = &req_delivered_cmd;};
 
 //function declarations -- helper and main
 bool main_fcn(ctrl_flags CF, int * out_data, help_input_from_main* help_input);
@@ -169,9 +167,9 @@ int main()
 bool main_fcn(ctrl_flags CF, int* help_out, help_input_from_main* help_input_ptr)
 {	
 	bool *call_help = CF.call_help;
-	bool *help_rdy = CF.help_rdy;
-	bool *request_val = CF.request_val;
-	bool *request_done = CF.request_done;
+	volatile bool *help_rdy = CF.help_rdy;
+	volatile bool *request_val = CF.request_val;
+	volatile bool *request_done = CF.request_done;
 
 	//initialize data for input to helper function
 	double inp1[N] = {1,2,3,4,5};
@@ -264,7 +262,6 @@ __global__ void dataKernel( int* data, int size, int* data_held){
 //this adds a value to a variable stored in global memory
 	int thid = threadIdx.x+blockIdx.x*blockDim.x;
 
-	
 	if(thid < size){
 		data_held[thid] = (blockIdx.x+ threadIdx.x);
 		data[thid] = (blockIdx.x+ threadIdx.x);
@@ -278,16 +275,7 @@ __global__ void dataKernel( int* data, int size, int* data_held){
 
 					asm("trap;");
 					}
-			if(*request_read == 1){
-					__syncthreads();
-					if(thid == 0)
-						*ready_to_read = 1;
-					while(*read_complete == 0)
-						{}
-
-					*request_read = 0;
-					*read_complete = 0;
-			}			
+			
 
 
 		}
@@ -297,13 +285,9 @@ __global__ void dataKernel( int* data, int size, int* data_held){
 
 
 __global__ void monitorKernel(int * write_2_ptr,  int * read_in_ptr){
-	*request_read = 1;
 
-	while(*ready_to_read == 0)
-		{}
 	*write_2_ptr = *read_in_ptr;
-	*read_complete =1;
-	*ready_to_read = 0;
+
 
 }
 
