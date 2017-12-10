@@ -100,7 +100,7 @@ int main()
 
 	double hA[4] = {1, 2, 3, 4};
 	double hB[4] = {1, 2, 3, 4};
-	double hC[4] = {.3, .3, -.5, -.25};
+	double hC[4] = {1,2,3,4};
 	double* dA;
 	double* dB;
 	double* dC;
