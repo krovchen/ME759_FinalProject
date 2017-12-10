@@ -140,7 +140,7 @@ int main(int argc, char** argv)
 	double *monitor_data;
 	cudaMallocHost((void**)&monitor_data, sizeof(double));
 	cudaStream_t stream1;
-	cudaStreamCreateWithFlags(&stream1, cudaStreamNonBlocking);	
+	cudaStreamCreate(&stream1);	
 
 
 	dataKernel<<<dimGrid, dimBlock, sizeof(double)*TileSize*TileSize*TileSize*TileSize>>>(dC, dA, dB, nSteps, temp1, temp2, temp3);
