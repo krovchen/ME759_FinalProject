@@ -144,7 +144,7 @@ int main(int argc, char** argv)
 
 
 	dataKernel<<<dimGrid, dimBlock, sizeof(double)*TileSize*TileSize*TileSize*TileSize>>>(dC, dA, dB, nSteps, temp1, temp2, temp3);
-
+	sleep(.001);
 		cout <<"Launching Monitor Kernel" << endl;
 	monitorKernel<<<1, 1,0, stream1>>>(monitor_data, &dC[1]);
 	cout <<"Launching Async Mem Cpy" << endl;
