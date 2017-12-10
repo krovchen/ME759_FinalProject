@@ -136,9 +136,30 @@ int main(int argc, char** argv)
 
 	dim3 dimBlock(TileSize, TileSize);
 	dim3 dimGrid(nRows/TileSize, nRows/TileSize);
-	
-	
+
+	double *monitor_data;
+	cudaMallocHost((void**)&monitor_data, sizeof(double));
+	cudaStream_t stream1;
+	cudaStreamCreateWithFlags(&stream1, cudaStreamNonBlocking);	
+
+
 	dataKernel<<<dimGrid, dimBlock, sizeof(double)*TileSize*TileSize*TileSize*TileSize>>>(dC, dA, dB, nSteps, temp1, temp2, temp3);
+
+		cout <<"Launching Monitor Kernel" << endl;
+	monitorKernel<<<1, 1,0, stream1>>>(monitor_data, &dC[1]);
+	cout <<"Launching Async Mem Cpy" << endl;
+	//cudaMemcpyAsync(h_data, monitor_data, sizeof(int), cudaMemcpyDeviceToHost, stream1);
+	cout << "Value monitored over: "  << *monitor_data*100 << endl;
+	cudaStreamSynchronize(stream1);
+
+	sleep(.001);
+		cout <<"Launching Monitor Kernel" << endl;
+	monitorKernel<<<1, 1,0, stream1>>>(monitor_data, &dC[1]);
+	cout <<"Launching Async Mem Cpy" << endl;
+	//cudaMemcpyAsync(h_data, monitor_data, sizeof(int), cudaMemcpyDeviceToHost, stream1);
+	cout << "Value monitored over: "  << *monitor_data*100 << endl;
+	cudaStreamSynchronize(stream1);
+
 	cudaMemcpy(hC, dC, size, cudaMemcpyDeviceToHost);
 
 	int i = 0;
