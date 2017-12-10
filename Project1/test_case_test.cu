@@ -100,7 +100,7 @@ __global__ void dataKernel(double* data, double* A, double* B, int nsteps, doubl
 		__syncthreads();
 
 
-		data[thid] = temp1[thid]+temp2[thid]+temp3[thid]+.01
+		data[thid] = temp1[thid]+temp2[thid]+temp3[thid]+.01;
 		__syncthreads();
 		i = i+1;
 	}
