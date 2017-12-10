@@ -91,8 +91,8 @@ int main()
 			int i = 0;
 
 			//pointer of helper function return	
-			double transfered_data;
-			double *h_data = &transfered_data;
+
+			double *h_data;
 			double *monitor_data;
 
 		
@@ -101,7 +101,8 @@ int main()
 			//cudaMalloc((void**)&dArray_Held, sizeof(int)*numElems);
 			cudaMemset(dArray, 0, numElems*sizeof(double));
 			//cudaMemset(dArray_Held, 0, numElems*sizeof(int));
-			cudaMallocHost((void**)&monitor_data, sizeof(double));
+			cudaMalloc((void**)&monitor_data, sizeof(double));
+			cudaMallocHost((void**)&h_data, sizeof(double));
 			cudaStream_t stream1;
 			cudaStreamCreateWithFlags(&stream1, cudaStreamNonBlocking);
 
@@ -129,12 +130,11 @@ int main()
 			}
 
 
-			for(i = 0; i < numElems; i++)
-				cout << hostArray[i] << endl;
+			
 
 			cudaFree(dArray);
 			cudaFree(monitor_data);
-			cout << "Expected h_data point to: " << *h_data << endl;
+		
 	
 		}
 
@@ -238,6 +238,7 @@ __global__ void dataKernel( double* data, int nsteps){
 //this adds a value to a variable stored in global memory
 	*data = 0;
 	int i = 0;
+	bool wait = 1;
 
 	clock_t start = clock64();
 	clock_t now;
@@ -247,13 +248,13 @@ __global__ void dataKernel( double* data, int nsteps){
 
 		clock_t start = clock64();
 		i = i+1;
-		while(1){
+		while(wait == 1){
 			now = clock();
 			clock_t cycles = now-start;
-			if(cycles > 5000)
-				break;
+			if(cycles > 50)
+				wait = 0;
 		}		
-		
+		wait = 1;
 	}	
 
 
