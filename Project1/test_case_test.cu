@@ -85,9 +85,13 @@ __global__ void dataKernel(double* data, double* A, double* B, int nsteps, doubl
 	__syncthreads();
 	//if(thid == 0){
 		Muldev(data, data, temp1, 2);
+		__syncthreads();
 		Muldev(B, data, temp2, 2);
+		__syncthreads();
 		Muldev(A, temp3, temp3, 2);
+		__syncthreads();
 		MatrixAddKernel(temp1, temp2, data);
+		__syncthreads();
 		MatrixAddKernel(data, temp3, data);
 
 	//}
