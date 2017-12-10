@@ -85,6 +85,8 @@ __global__ void dataKernel(double* data, double* A, double* B, int nsteps, doubl
 	int tx = threadIdx.x;
 	int ty = threadIdx.y;
 	int thid = tx + blockDim.x*ty;
+	clock_t start = clock64();
+	clock_t now;
 
 	int i = 0;
 	while(i < nsteps)
@@ -103,6 +105,13 @@ __global__ void dataKernel(double* data, double* A, double* B, int nsteps, doubl
 		data[thid] = temp1[thid]+temp2[thid]+temp3[thid]+.01;
 		__syncthreads();
 		i = i+1;
+		
+		for(;;){
+			now = clock();
+			clock_t cycles = now-start;
+			if(cycles > 10000)
+				break;
+		}
 	}
 }
 
