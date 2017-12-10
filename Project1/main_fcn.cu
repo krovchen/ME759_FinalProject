@@ -104,8 +104,8 @@ int main()
 			cudaMalloc((void**)&monitor_data, sizeof(double));
 			cudaMallocHost((void**)&h_data, sizeof(double));
 			cudaStream_t stream1;
-			//cudaStreamCreateWithFlags(&stream1, cudaStreamNonBlocking);
-			cudaStreamCreate(&stream1);
+			cudaStreamCreateWithFlags(&stream1, cudaStreamNonBlocking);
+			//cudaStreamCreate(&stream1);
 
 
 			while(CF.main_done_cmd == 0){
