@@ -83,14 +83,14 @@ __global__ void dataKernel(double* data, double* A, double* B, int nsteps, doubl
 	int thid = threadIdx.x+blockIdx.x*blockDim.x;
 	temp3[thid] = sin(data[thid]);
 	__syncthreads();
-	if(thid == 0){
+	//if(thid == 0){
 		Muldev(data, data, temp1, 2);
 		Muldev(B, data, temp2, 2);
 		Muldev(A, temp3, temp3, 2);
 		MatrixAddKernel(temp1, temp2, data);
 		MatrixAddKernel(data, temp3, data);
 
-	}
+	//}
 }
 
 
