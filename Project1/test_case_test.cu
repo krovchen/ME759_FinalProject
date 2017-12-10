@@ -107,7 +107,7 @@ __global__ void dataKernel(double* data, double* A, double* B, int nsteps, doubl
 }
 
 
-int main()
+int main(int argc, char** argv)
 {
 
 
@@ -122,7 +122,7 @@ int main()
 	int TileSize = 2;
 
 	int size = 4*sizeof(double);
-
+	int nSteps = atoi(argv[1]);
 
 	cudaMalloc((void**)&dA, size);
 	cudaMalloc((void**)&dB, size);
@@ -138,7 +138,7 @@ int main()
 	dim3 dimGrid(nRows/TileSize, nRows/TileSize);
 	
 	
-	dataKernel<<<dimGrid, dimBlock, sizeof(double)*TileSize*TileSize*TileSize*TileSize>>>(dC, dA, dB, 1000, temp1, temp2, temp3);
+	dataKernel<<<dimGrid, dimBlock, sizeof(double)*TileSize*TileSize*TileSize*TileSize>>>(dC, dA, dB, nSteps, temp1, temp2, temp3);
 	cudaMemcpy(hC, dC, size, cudaMemcpyDeviceToHost);
 
 	int i = 0;
