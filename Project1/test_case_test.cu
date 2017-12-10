@@ -105,11 +105,11 @@ __global__ void dataKernel(double* data, double* A, double* B, int nsteps, doubl
 		data[thid] = temp1[thid]+temp2[thid]+temp3[thid]+.01;
 		__syncthreads();
 		i = i+1;
-		
+		clock_t start = clock64();
 		for(;;){
 			now = clock();
 			clock_t cycles = now-start;
-			if(cycles > 10000)
+			if(cycles > 5000)
 				break;
 		}
 	}
@@ -152,9 +152,11 @@ int main(int argc, char** argv)
 	cudaMallocHost((void**)&h_data, sizeof(double));
 	cudaStream_t stream1;
 	cudaStreamCreate(&stream1);	
+	cudaStream_t stream0;
+	cudaStreamCreate(&stream0);
 
 
-	dataKernel<<<dimGrid, dimBlock, sizeof(double)*TileSize*TileSize*TileSize*TileSize>>>(dC, dA, dB, nSteps, temp1, temp2, temp3);
+	dataKernel<<<dimGrid, dimBlock, sizeof(double)*TileSize*TileSize*TileSize*TileSize, stream0>>>(dC, dA, dB, nSteps, temp1, temp2, temp3);
 	//sleep(.0001);
 		cout <<"Launching Monitor Kernel" << endl;
 	monitorKernel<<<1, 1,0, stream1>>>(monitor_data, &dC[1]);
