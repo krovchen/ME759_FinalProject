@@ -84,7 +84,7 @@ __global__ void dataKernel(double* data, double* A, double* B, int nsteps, doubl
 
 	int tx = threadIdx.x;
 	int ty = threadIdx.y;
-	thid = tx + blockDim.x*threadIdx.y;
+	int thid = tx + blockDim.x*ty;
 	//thid = thidx+block
 	temp3[thid] = sin(data[thid]);
 	__syncthreads();
