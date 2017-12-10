@@ -7,11 +7,12 @@
 using namespace std;
 
 
-__global__ void dataKernel(double* data, double* A, double* B, int nsteps);
 __global__ void monitorKernel(double * write_2_ptr,  double * read_in_ptr);
 
 
-__global__ void Muldev(double* A, double* B, double* C, int nRows)
+
+
+__device__ void Muldev(double* A, double* B, double* C, int nRows)
 {
 
 	extern __shared__ double ptr[];
@@ -67,6 +68,13 @@ __global__ void Muldev(double* A, double* B, double* C, int nRows)
 }
 
 
+__global__ void dataKernel(double* data, double* A, double* B, int nsteps){
+//this adds a value to a variable stored in global memory
+
+	Muldev(A, B, data, 2);
+}
+
+
 int main()
 {
 
@@ -93,7 +101,7 @@ int main()
 	dim3 dimGrid(nRows/TileSize, nRows/TileSize);
 
 	
-	Muldev<<<dimGrid, dimBlock, sizeof(double)*TileSize*TileSize*TileSize*TileSize>>>(dA, dB, dC, nRows);
+	dataKernel<<<dimGrid, dimBlock, sizeof(double)*TileSize*TileSize*TileSize*TileSize>>>(dA, dB, dC, nRows);
 	cudaMemcpy(hC, dC, size, cudaMemcpyDeviceToHost);
 
 	int i = 0;
@@ -182,22 +190,6 @@ return 0;*/
 __global__ void monitorKernel(double * write_2_ptr,  double * read_in_ptr){
 
 	*write_2_ptr = *read_in_ptr;
-}
-
-
-__global__ void dataKernel(double* data, double* A, double* B, int nsteps){
-//this adds a value to a variable stored in global memory
-
-	int i = 0;
-
-	int thid = threadIdx.x;
-
-	while(i < nsteps){
-		//u1[thid] = u1[thid]*u1[thid]+5;
-
-		
-	}
-
 }
 
 
