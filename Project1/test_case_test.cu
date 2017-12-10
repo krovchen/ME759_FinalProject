@@ -101,7 +101,7 @@ int main()
 	dim3 dimGrid(nRows/TileSize, nRows/TileSize);
 
 	
-	dataKernel<<<dimGrid, dimBlock, sizeof(double)*TileSize*TileSize*TileSize*TileSize>>>(dA, dB, dC, nRows);
+	dataKernel<<<dimGrid, dimBlock, sizeof(double)*TileSize*TileSize*TileSize*TileSize>>>(dC, dA, dB, 1000);
 	cudaMemcpy(hC, dC, size, cudaMemcpyDeviceToHost);
 
 	int i = 0;
