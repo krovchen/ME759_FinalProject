@@ -139,7 +139,8 @@ int main(int argc, char** argv)
 
 	double *monitor_data;
 	double *h_data;
-	cudaMallocHost((void**)&monitor_data, sizeof(double));
+	cudaMalloc((void**)&monitor_data, sizeof(double));
+	cudaMallocHost((void**)&h_data, sizeof(double));
 	cudaStream_t stream1;
 	cudaStreamCreate(&stream1);	
 
@@ -150,16 +151,17 @@ int main(int argc, char** argv)
 	monitorKernel<<<1, 1,0, stream1>>>(monitor_data, &dC[1]);
 	cout <<"Launching Async Mem Cpy" << endl;
 	cudaMemcpyAsync(h_data, monitor_data, sizeof(double), cudaMemcpyDeviceToHost, stream1);
-	cout << "Value monitored over: "  << *h_data*100 << endl;
-	//cudaStreamSynchronize(stream1);
 
+	cudaStreamSynchronize(stream1);
+	cout << "Value monitored over: "  << *h_data*100 << endl;
 	sleep(.001);
 		cout <<"Launching Monitor Kernel" << endl;
 	monitorKernel<<<1, 1,0, stream1>>>(monitor_data, &dC[1]);
 	cout <<"Launching Async Mem Cpy" << endl;
 	cudaMemcpyAsync(h_data, monitor_data, sizeof(double), cudaMemcpyDeviceToHost, stream1);
-	cout << "Value monitored over: "  << *h_data*100 << endl;
-	//cudaStreamSynchronize(stream1);
+
+	cudaStreamSynchronize(stream1);
+		cout << "Value monitored over: "  << *h_data*100 << endl;
 	sleep(1);
 	cudaMemcpy(hC, dC, size, cudaMemcpyDeviceToHost);
 
