@@ -108,7 +108,7 @@ int main()
 	double* dC;
 	double *temp1, *temp2, *temp3;
 	int nRows = 2;
-	int TileSize = 2;
+	int TileSize = 4;
 
 	int size = 4*sizeof(double);
 
