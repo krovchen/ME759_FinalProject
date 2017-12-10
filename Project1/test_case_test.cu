@@ -89,7 +89,7 @@ __global__ void dataKernel(double* data, double* A, double* B, int nsteps, doubl
 	int i = 0;
 	while(i < nsteps)
 	{
-		temp3[thid] = sin(data[thid]);
+		temp3[thid] = sin(data[thid]*180/3.141592);
 		__syncthreads();
 	
 		Muldev(data, data, temp1, 2);
