@@ -85,10 +85,13 @@ __global__ void dataKernel(double* data, double* A, double* B, int nsteps, doubl
 	int tx = threadIdx.x;
 	int ty = threadIdx.y;
 	int thid = tx + blockDim.x*ty;
-	//thid = thidx+block
-	temp3[thid] = sin(data[thid]);
-	__syncthreads();
-	//if(thid == 0){
+
+	int i = 0;
+	while(i < nsteps)
+	{
+		temp3[thid] = sin(data[thid]);
+		__syncthreads();
+	
 		Muldev(data, data, temp1, 2);
 		__syncthreads();
 		Muldev(B, data, temp2, 2);
@@ -96,8 +99,11 @@ __global__ void dataKernel(double* data, double* A, double* B, int nsteps, doubl
 		Muldev(A, temp3, temp3, 2);
 		__syncthreads();
 
-	//}
-	data[thid] = temp1[thid]+temp2[thid]+temp3[thid];
+
+		data[thid] = temp1[thid]+temp2[thid]+temp3[thid];
+		__syncthreads();
+		i = i+1;
+	}
 }
 
 
@@ -105,9 +111,9 @@ int main()
 {
 
 
-	double hA[4] = {1, 2, 3, 4};
-	double hB[4] = {1, 2, 3, 4};
-	double hC[4] = {1,2,3,4};
+	double hA[4] = {.6, -.1, .6, 1.95};
+	double hB[4] = {1/150, .1/150, -.1/150, -1/150};
+	double hC[4] = {.3, .3, -.5, -.25};
 	double* dA;
 	double* dB;
 	double* dC;
