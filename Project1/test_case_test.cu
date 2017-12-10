@@ -138,7 +138,7 @@ int main(int argc, char** argv)
 	dim3 dimGrid(nRows/TileSize, nRows/TileSize);
 
 	double *monitor_data;
-	double *hdata;
+	double *h_data;
 	cudaMallocHost((void**)&monitor_data, sizeof(double));
 	cudaStream_t stream1;
 	cudaStreamCreate(&stream1);	
