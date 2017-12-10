@@ -190,7 +190,7 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 		sleep(.1);
 	cout << "Main update received " << *help_out << endl;
 	*request_done = 0;
-	sleep(.02);
+	sleep(2);
 
 	cout << "Main Requestiong Third function update " << endl;
 	*request_val = 1;
