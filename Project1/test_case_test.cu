@@ -71,8 +71,8 @@ int main()
 {
 
 
-	double hA[4] = {1/150, .1/150, -.1/150, -1/150};
-	double hB[4] = {.6, -.1, .6, 1.95};
+	double hA[4] = {1, 2, 3, 4};
+	double hB[4] = {1, 2, 3, 4};
 	double hC[4];
 	double* dA;
 	double* dB;
