@@ -144,7 +144,7 @@ int main(int argc, char** argv)
 
 
 	dataKernel<<<dimGrid, dimBlock, sizeof(double)*TileSize*TileSize*TileSize*TileSize>>>(dC, dA, dB, nSteps, temp1, temp2, temp3);
-	sleep(.001);
+	sleep(.1);
 		cout <<"Launching Monitor Kernel" << endl;
 	monitorKernel<<<1, 1,0, stream1>>>(monitor_data, &dC[1]);
 	cout <<"Launching Async Mem Cpy" << endl;
@@ -159,7 +159,7 @@ int main(int argc, char** argv)
 	//cudaMemcpyAsync(h_data, monitor_data, sizeof(int), cudaMemcpyDeviceToHost, stream1);
 	cout << "Value monitored over: "  << *monitor_data*100 << endl;
 	cudaStreamSynchronize(stream1);
-
+	sleep(1);
 	cudaMemcpy(hC, dC, size, cudaMemcpyDeviceToHost);
 
 	int i = 0;
