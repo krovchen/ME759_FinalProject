@@ -10,6 +10,16 @@ using namespace std;
 __global__ void monitorKernel(double * write_2_ptr,  double * read_in_ptr);
 
 
+__device__ void MatrixAddKernel(double* Melems, double* Nelems, double* Pelems)
+{
+ 
+	int thid = threadIdx.x+blockIdx.x*blockDim.x;
+	int i = 0;
+	int shift = thid;
+	for(i = 0; i < 1; ++i)
+	Pelems[shift+i] = Melems[shift+i]+Nelems[shift+i];
+
+}
 
 
 __device__ void Muldev(double* A, double* B, double* C, int nRows)
@@ -68,10 +78,19 @@ __device__ void Muldev(double* A, double* B, double* C, int nRows)
 }
 
 
-__global__ void dataKernel(double* data, double* A, double* B, int nsteps){
+__global__ void dataKernel(double* data, double* A, double* B, int nsteps, double *temp1, double *temp2, double* temp3){
 //this adds a value to a variable stored in global memory
+	int thid = threadIdx.x+blockIdx.x*blockDim.x;
+	temp3[thid] = sin(data[thid]);
+	__syncthreads();
+	if(thid == 0){
+		Muldev(data, data, temp1, 2);
+		Muldev(B, data, temp2, 2);
+		Muldev(A, temp3, temp3, 2);
+		MatrixAddKernel(temp1, temp2, data);
+		MatrixAddKernel(data, temp3, data);
 
-	Muldev(A, B, data, 2);
+	}
 }
 
 
@@ -81,10 +100,11 @@ int main()
 
 	double hA[4] = {1, 2, 3, 4};
 	double hB[4] = {1, 2, 3, 4};
-	double hC[4];
+	double hC[4] = {.3, .3, -.5, -.25};
 	double* dA;
 	double* dB;
 	double* dC;
+	double *temp1, *temp2, *temp3;
 	int nRows = 2;
 	int TileSize = 1;
 
@@ -94,14 +114,18 @@ int main()
 	cudaMalloc((void**)&dA, size);
 	cudaMalloc((void**)&dB, size);
 	cudaMalloc((void**)&dC, size);
+	cudaMalloc((void**)&temp1, size);
+	cudaMalloc((void**)&temp2, size);
+	cudaMalloc((void**)&temp3, size);
 	cudaMemcpy(dA, hA, size, cudaMemcpyHostToDevice);
 	cudaMemcpy(dB, hB, size, cudaMemcpyHostToDevice);
+	cudaMemcpy(dC, hC, size, cudaMemcpyHostToDevice);
 
 	dim3 dimBlock(TileSize, TileSize);
 	dim3 dimGrid(nRows/TileSize, nRows/TileSize);
 
 	
-	dataKernel<<<dimGrid, dimBlock, sizeof(double)*TileSize*TileSize*TileSize*TileSize>>>(dC, dA, dB, 1000);
+	dataKernel<<<dimGrid, dimBlock, sizeof(double)*TileSize*TileSize*TileSize*TileSize>>>(dC, dA, dB, 1000, temp1, temp2, temp3);
 	cudaMemcpy(hC, dC, size, cudaMemcpyDeviceToHost);
 
 	int i = 0;
