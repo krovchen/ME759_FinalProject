@@ -114,7 +114,7 @@ int main()
 					CF.call_help_cmd = 0;
 					cout <<"Launching Helper Kernel" << endl;
 					//*help_rdy =  help_fcn(*help_input, out);
-					dataKernel<<<1,1>>>(dArray, 10000);
+					dataKernel<<<1,1>>>(dArray, 100);
 				}
 				if(CF.help_running_cmd == 1 && allow_interrupt == 0 && CF.request_val_cmd == 1){	
 					cout <<"Launching Monitor Kernel" << endl;
@@ -251,8 +251,8 @@ __global__ void dataKernel( double* data, int nsteps){
 		i = i+1;
 		while(wait == 1){
 			now = clock();
-			clock_t cycles = now-start;
-			if(cycles > 50)
+			clock_t cycles = now > start ? now - start : now + (0xffffffff - start);
+			if(cycles > 5)
 				wait = 0;
 		}		
 		wait = 1;
