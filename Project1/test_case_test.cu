@@ -80,16 +80,21 @@ __device__ void Muldev(double* A, double* B, double* C, int nRows)
 
 __global__ void dataKernel(double* data, double* A, double* B, int nsteps, double *temp1, double *temp2, double* temp3){
 //this adds a value to a variable stored in global memory
-	int thid = threadIdx.x+blockIdx.x*blockDim.x;
+
+
+	int tx = threadIdx.x;
+	int ty = threadIdx.y;
+	thid = tx + blockDim.x*threadIdx.y;
+	//thid = thidx+block
 	temp3[thid] = sin(data[thid]);
 	__syncthreads();
 	//if(thid == 0){
 		Muldev(data, data, temp1, 2);
 		__syncthreads();
 		Muldev(B, data, temp2, 2);
-__syncthreads();
+		__syncthreads();
 		Muldev(A, temp3, temp3, 2);
-__syncthreads();
+		__syncthreads();
 
 	//}
 	data[thid] = temp1[thid]+temp2[thid]+temp3[thid];
@@ -108,7 +113,7 @@ int main()
 	double* dC;
 	double *temp1, *temp2, *temp3;
 	int nRows = 2;
-	int TileSize = 4;
+	int TileSize = 2;
 
 	int size = 4*sizeof(double);
 
@@ -125,7 +130,7 @@ int main()
 
 	dim3 dimBlock(TileSize, TileSize);
 	dim3 dimGrid(nRows/TileSize, nRows/TileSize);
-
+	
 	
 	dataKernel<<<dimGrid, dimBlock, sizeof(double)*TileSize*TileSize*TileSize*TileSize>>>(dC, dA, dB, 1000, temp1, temp2, temp3);
 	cudaMemcpy(hC, dC, size, cudaMemcpyDeviceToHost);
