@@ -130,7 +130,8 @@ int main()
 			}
 
 
-			
+			cudaMemcpy(h_data, dArray, sizeof(double), cudaMemcpyDeviceToHost);
+			cout << "Value copied over: "  << *h_data << endl;
 
 			cudaFree(dArray);
 			cudaFree(monitor_data);
