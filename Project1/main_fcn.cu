@@ -253,7 +253,7 @@ __global__ void dataKernel( double* data, int nsteps){
 		while(wait == 1){
 			now = clock();
 			clock_t cycles = now > start ? now - start : now + (0xffffffff - start);
-			if(cycles > 500000)
+			if(cycles > 50000)
 				wait = 0;
 		}		
 		wait = 1;
