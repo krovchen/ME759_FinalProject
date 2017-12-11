@@ -152,7 +152,7 @@ int main()
 
 bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_ptr)
 {	
-	struct timeval stop, start;
+	struct timespec stop, start;
 	bool *call_help = CF.call_help;
 	//volatile bool *help_rdy = CF.help_rdy;
 	volatile bool *request_val = CF.request_val;
@@ -173,7 +173,7 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 
 	//if interrupt not allowed, then request value from help
 
-	gettimeofday(&stop, NULL);
+	clock_gettime(CLOCK_MONOTONIC_RAW,&start);
 	if(allow_interrupt == 0){	
 		//cout << "Main requesting function update" << endl;
 		*request_val = 1;
@@ -183,10 +183,10 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 
 
 	//cout << "Main update received " << *help_out << endl;
-	gettimeofday(&stop, NULL);
-	int sval = stop.tv_sec-start.tv_sec;
-	int uval = stop.tv_usec-start.tv_usec;
-	cout << "Time between message request and message receive is: " << sval+uval*.000001 << endl;
+	clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
+	int sval = stop.tv_nsec-start.tv_nsec;
+
+	cout << "Time between message request and message receive in ns is: " << sval << endl;
 
 	*request_done = 0;
 	sleep(.2);
@@ -194,15 +194,16 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 	cout << "Main Requestiong Second function update " << endl;
 	//cout << "Current Request Val (shoudl be 0) = " << *request_val << endl;
 	
-	gettimeofday(&stop, NULL);
+	clock_gettime(CLOCK_MONOTONIC_RAW,&start);
 	*request_val = 1;
 	while(*request_done == 0)
 		sleep(.00001);
 	//cout << "Main update received " << *help_out << endl;
-	gettimeofday(&stop, NULL);
-	sval = stop.tv_sec-start.tv_sec;
-	uval = stop.tv_usec-start.tv_usec;
-	cout << "Time between message request and message receive is: " << sval+uval*.000001 << endl;
+	clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
+	 sval = stop.tv_nsec-start.tv_nsec;
+
+
+	cout << "Time between message request and message receive in ns is: " << sval << endl;
 
 	*request_done = 0;
 	sleep(.2);
