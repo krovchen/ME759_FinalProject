@@ -36,7 +36,7 @@ __global__ void dataKernel( double* data, int nsteps){
 }
 
 
-__global__ void monitorKernel(int * write_2_ptr,  int * read_in_ptr){
+__global__ void monitorKernel(double * write_2_ptr,  double * read_in_ptr){
 	
 
 
@@ -56,17 +56,39 @@ int main()
 			//pointer of helper function return	
 
 			double h_data[numElems];
-
+			double monitor_data[numElems];
 
 			cudaMalloc((void**)&dArray, sizeof(double)*numElems);
 			cudaMemset(dArray, 0, numElems*sizeof(double));
 			cudaMallocHost((void**)&h_data, sizeof(double)*numElems);
-
+			cudaStream_t stream1;
+			cudaStreamCreateWithFlags(&stream1, cudaStreamNonBlocking);
+			cudaMalloc((void**)&monitor_data, sizeof(double)*numElems);
 
 
 		cout <<"Launching Helper Kernel" << endl;
 			//*help_rdy =  help_fcn(*help_input, out);
 			dataKernel<<<1,numElems>>>(dArray, 1000);
+			sleep(.4);
+
+					cout <<"Launching Monitor Kernel" << endl;
+					//cudaStreamSynchronize(stream1);
+					monitorKernel<<<1, 1,0, stream1>>>(monitor_data, dArray);
+					cout <<"Launching Async Mem Cpy" << endl;
+					cudaMemcpyAsync(h_data, monitor_data, numElems*sizeof(double), cudaMemcpyDeviceToHost, stream1);
+					cudaStreamSynchronize(stream1);
+						for(i = 0; i < numElems; i++)
+				cout << "Value copied over: "  << h_data[i] << endl;
+					sleep(.3);
+							cout <<"Launching Monitor Kernel" << endl;
+					//cudaStreamSynchronize(stream1);
+					monitorKernel<<<1, 1,0, stream1>>>(monitor_data, dArray);
+					cout <<"Launching Async Mem Cpy" << endl;
+					cudaMemcpyAsync(h_data, monitor_data, numElems*sizeof(double), cudaMemcpyDeviceToHost, stream1);
+					cudaStreamSynchronize(stream1);
+						for(i = 0; i < numElems; i++)
+				cout << "Value copied over: "  << h_data[i] << endl;
+
 
 
 			cudaMemcpy(h_data, dArray, sizeof(double)*numElems, cudaMemcpyDeviceToHost);
@@ -75,7 +97,7 @@ int main()
 
 			cudaFree(dArray);
 	
-
+			cudaFree(monitor_data);
 return 0;
 
 
