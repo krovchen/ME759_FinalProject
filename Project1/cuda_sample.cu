@@ -56,14 +56,15 @@ int main()
 			//pointer of helper function return	
 
 			double h_data[numElems];
-			double monitor_data[numElems];
+			//double monitor_data[numElems];
+			double monitor_data_dev[numElems];
 
 			cudaMalloc((void**)&dArray, sizeof(double)*numElems);
 			cudaMemset(dArray, 0, numElems*sizeof(double));
 			cudaMallocHost((void**)&h_data, sizeof(double)*numElems);
 			cudaStream_t stream1;
 			cudaStreamCreateWithFlags(&stream1, cudaStreamNonBlocking);
-			cudaMalloc((void**)&monitor_data, sizeof(double)*numElems);
+			cudaMalloc((void**)&monitor_data_dev, sizeof(double)*numElems);
 
 
 		cout <<"Launching Helper Kernel" << endl;
@@ -73,18 +74,18 @@ int main()
 
 					cout <<"Launching Monitor Kernel" << endl;
 					//cudaStreamSynchronize(stream1);
-					monitorKernel<<<1, 1,0, stream1>>>(monitor_data, dArray);
+					monitorKernel<<<1, 1,0, stream1>>>(monitor_data_dev, dArray);
 					cout <<"Launching Async Mem Cpy" << endl;
-					cudaMemcpyAsync(h_data, monitor_data, numElems*sizeof(double), cudaMemcpyDeviceToHost, stream1);
+					cudaMemcpyAsync(h_data, monitor_data_dev, numElems*sizeof(double), cudaMemcpyDeviceToHost, stream1);
 					cudaStreamSynchronize(stream1);
 						for(i = 0; i < numElems; i++)
 				cout << "Value copied over: "  << h_data[i] << endl;
 					sleep(.3);
 							cout <<"Launching Monitor Kernel" << endl;
 					//cudaStreamSynchronize(stream1);
-					monitorKernel<<<1, 1,0, stream1>>>(monitor_data, dArray);
+					monitorKernel<<<1, 1,0, stream1>>>(monitor_data_dev, dArray);
 					cout <<"Launching Async Mem Cpy" << endl;
-					cudaMemcpyAsync(h_data, monitor_data, numElems*sizeof(double), cudaMemcpyDeviceToHost, stream1);
+					cudaMemcpyAsync(h_data, monitor_data_dev, numElems*sizeof(double), cudaMemcpyDeviceToHost, stream1);
 					cudaStreamSynchronize(stream1);
 						for(i = 0; i < numElems; i++)
 				cout << "Value copied over: "  << h_data[i] << endl;
@@ -97,7 +98,7 @@ int main()
 
 			cudaFree(dArray);
 	
-			cudaFree(monitor_data);
+			cudaFree(monitor_data_dev);
 return 0;
 
 
