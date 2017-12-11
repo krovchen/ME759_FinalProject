@@ -10,7 +10,7 @@ using namespace std;
 //global variables
 const bool allow_interrupt = 0;
 const int N = 1;
-const int numElems =512;
+const int numElems =1024;
 
 struct help_input_from_main{
 	static const int length = N;
