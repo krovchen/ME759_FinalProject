@@ -10,7 +10,7 @@ using namespace std;
 //global variables
 const bool allow_interrupt = 0;
 const int N = 1;
-const int numElems =1024;
+const int numElems =4096;
 
 struct help_input_from_main{
 	static const int length = N;
@@ -89,6 +89,12 @@ int main()
 			double *dArray;
 
 			int i = 0;
+			int numBlocks = 1;
+			int numThreads = numElems;
+			if(numElems > 1024){			//for now just assume numElems is multiple of 1024
+				numThreads = 1024;
+				numBlocks = numElems/numThreads;
+			}
 
 			//pointer of helper function return	
 
@@ -116,12 +122,13 @@ int main()
 					CF.call_help_cmd = 0;
 					cout <<"Launching Helper Kernel" << endl;
 					//*help_rdy =  help_fcn(*help_input, out);
-					dataKernel<<<1,numElems>>>(dArray, 1000);
+			
+					dataKernel<<<numBlocks,numThreads>>>(dArray, 1000);
 				}
 				if(CF.help_running_cmd == 1 && allow_interrupt == 0 && CF.request_val_cmd == 1){	
 					cout <<"Launching Monitor Kernel" << endl;
 					//cudaStreamSynchronize(stream1);
-					monitorKernel<<<1, numElems,0, stream1>>>(monitor_data, dArray);
+					monitorKernel<<<numBlocks, numThreads,0, stream1>>>(monitor_data, dArray);
 					cout <<"Launching Async Mem Cpy" << endl;
 					cudaMemcpyAsync(h_data, monitor_data, numElems*sizeof(double), cudaMemcpyDeviceToHost, stream1);
 					cudaStreamSynchronize(stream1);
