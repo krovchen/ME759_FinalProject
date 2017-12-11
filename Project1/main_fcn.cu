@@ -10,7 +10,7 @@ using namespace std;
 //global variables
 const bool allow_interrupt = 0;
 const int N = 1;
-const int numElems =1;
+const int numElems =4;
 
 struct help_input_from_main{
 	static const int length = N;
@@ -194,7 +194,8 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 	for(i = 0; i < 3; i++)
 		cout << "Main update received " << help_out[i] << endl;
 	*request_done = 0;
-	sum_times = sum_times+sval;
+	if(j > 0)  //skip the first call because its bad fro some reason
+		sum_times = sum_times+sval;
 	sleep(.2);
 
 	}
