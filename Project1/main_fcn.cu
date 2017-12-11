@@ -243,15 +243,15 @@ __global__ void dataKernel( double* data, int nsteps){
 	int thid = threadIdx.x+blockIdx.x*blockDim.x;
 	//data[thid] = 0;
 	int i = 0;
-	bool wait = 1;
+	//bool wait = 1;
 
-	clock_t start = clock64();
-	clock_t now;
+	//clock_t start = clock64();
+	//clock_t now;
 
 	while(i < nsteps){
 		data[thid] = data[thid]+.1;
 
-		clock_t start = clock64();
+	/*	clock_t start = clock64();
 		i = i+1;
 		while(wait == 1){
 			now = clock();
@@ -261,7 +261,7 @@ __global__ void dataKernel( double* data, int nsteps){
 		}		
 		wait = 1;
 		
-	}	
+	}	*/
 
 
 
