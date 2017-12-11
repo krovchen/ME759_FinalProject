@@ -55,9 +55,9 @@ int main()
 
 			//pointer of helper function return	
 
-			double h_data[numElems];
+			double *h_data;
 			//double monitor_data[numElems];
-			double monitor_data_dev[numElems];
+			double *monitor_data_dev;
 
 			cudaMalloc((void**)&dArray, sizeof(double)*numElems);
 			cudaMemset(dArray, 0, numElems*sizeof(double));
