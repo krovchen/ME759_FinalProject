@@ -10,7 +10,7 @@ using namespace std;
 //global variables
 const bool allow_interrupt = 0;
 const int N = 1;
-const int numElems =16;
+const int numElems =64;
 
 struct help_input_from_main{
 	static const int length = N;
@@ -340,7 +340,7 @@ bool help_fcn(help_input_from_main help_input, double* out){
 
 __global__ void dataKernel( double* data, int nsteps){
 //this adds a value to a variable stored in global memory
-	int thid = threadIdx.x;
+	int thid = threadIdx.x+blockIdx.x*blockDim;
 	//data[thid] = 0;
 	int i = 0;
 	bool wait = 1;
