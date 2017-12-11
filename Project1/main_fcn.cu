@@ -217,12 +217,86 @@ cout << "Main update received " << *help_out << endl;
 		sleep(.00000001);
 	gettimeofday(&stop, NULL);
 	//cout << "Main update received " << *help_out << endl;
- sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
+ 	sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
 		sval = sval + stop.tv_usec-start.tv_usec; //us
 			cout << "Time between message request and message receive in us is: " << sval << endl;
-cout << "Main update received " << *help_out << endl;
+	cout << "Main update received " << *help_out << endl;
 	*request_done = 0;
-	//sleep(2);
+	sleep(.5);
+
+
+	cout << "Main Requestiong Third function update " << endl;
+	gettimeofday(&start, NULL);
+	*request_val = 1;
+	while(*request_done == 0)
+		sleep(.00000001);
+	gettimeofday(&stop, NULL);
+	//cout << "Main update received " << *help_out << endl;
+ 	sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
+		sval = sval + stop.tv_usec-start.tv_usec; //us
+			cout << "Time between message request and message receive in us is: " << sval << endl;
+	cout << "Main update received " << *help_out << endl;
+	*request_done = 0;
+	sleep(.5);
+
+	cout << "Main Requestiong Third function update " << endl;
+	gettimeofday(&start, NULL);
+	*request_val = 1;
+	while(*request_done == 0)
+		sleep(.00000001);
+	gettimeofday(&stop, NULL);
+	//cout << "Main update received " << *help_out << endl;
+ 	sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
+		sval = sval + stop.tv_usec-start.tv_usec; //us
+			cout << "Time between message request and message receive in us is: " << sval << endl;
+	cout << "Main update received " << *help_out << endl;
+	*request_done = 0;
+	sleep(.5);
+
+	cout << "Main Requestiong Third function update " << endl;
+	gettimeofday(&start, NULL);
+	*request_val = 1;
+	while(*request_done == 0)
+		sleep(.00000001);
+	gettimeofday(&stop, NULL);
+	//cout << "Main update received " << *help_out << endl;
+ 	sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
+		sval = sval + stop.tv_usec-start.tv_usec; //us
+			cout << "Time between message request and message receive in us is: " << sval << endl;
+	cout << "Main update received " << *help_out << endl;
+	*request_done = 0;
+	sleep(.5);
+
+	cout << "Main Requestiong Third function update " << endl;
+	gettimeofday(&start, NULL);
+	*request_val = 1;
+	while(*request_done == 0)
+		sleep(.00000001);
+	gettimeofday(&stop, NULL);
+	//cout << "Main update received " << *help_out << endl;
+ 	sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
+		sval = sval + stop.tv_usec-start.tv_usec; //us
+			cout << "Time between message request and message receive in us is: " << sval << endl;
+	cout << "Main update received " << *help_out << endl;
+	*request_done = 0;
+	sleep(.5);
+
+	cout << "Main Requestiong Third function update " << endl;
+	gettimeofday(&start, NULL);
+	*request_val = 1;
+	while(*request_done == 0)
+		sleep(.00000001);
+	gettimeofday(&stop, NULL);
+	//cout << "Main update received " << *help_out << endl;
+ 	sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
+		sval = sval + stop.tv_usec-start.tv_usec; //us
+			cout << "Time between message request and message receive in us is: " << sval << endl;
+	cout << "Main update received " << *help_out << endl;
+	*request_done = 0;
+	//sleep(.5);
+
+
+
 	cout << "Exiting Main" << endl;
 	
 	return 1;
