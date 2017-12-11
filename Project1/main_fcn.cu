@@ -201,7 +201,7 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 	}
 
 	
-	cout << "Average read time between message request and message received in us is: " << sum_times/numReads << endl;
+	cout << "Average read time between message request and message received in us is: " << sum_times/(numReads-1) << endl;
 
 	//=======USER code AFTER calling helper goes here======
 
@@ -259,7 +259,7 @@ __global__ void dataKernel( double* data, int nsteps){
 				wait = 0;
 		}		
 		wait = 1;
-		__syncthreads();
+		
 	}	
 
 
