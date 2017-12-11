@@ -121,7 +121,7 @@ int main()
 				if(CF.help_running_cmd == 1 && allow_interrupt == 0 && CF.request_val_cmd == 1){	
 					cout <<"Launching Monitor Kernel" << endl;
 					//cudaStreamSynchronize(stream1);
-					monitorKernel<<<1, 1,0, stream1>>>(monitor_data, dArray);
+					monitorKernel<<<1, numElems,0, stream1>>>(monitor_data, dArray);
 					cout <<"Launching Async Mem Cpy" << endl;
 					cudaMemcpyAsync(h_data, monitor_data, numElems*sizeof(double), cudaMemcpyDeviceToHost, stream1);
 					cudaStreamSynchronize(stream1);
@@ -189,7 +189,7 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 	sval = sval + stop.tv_usec-start.tv_usec; //us
 
 	cout << "Time between message request and message receive in us is: " << sval << endl;
-	//for(i = 0; i < numElems; i++)
+	for(i = 0; i < 4; i++)
 		cout << "Main update received " << help_out[0] << endl;
 	*request_done = 0;
 	sleep(.2);
@@ -370,7 +370,8 @@ __global__ void dataKernel( double* data, int nsteps){
 
 __global__ void monitorKernel(double * write_2_ptr,  double * read_in_ptr){
 
-	*write_2_ptr = *read_in_ptr;
+	int thid = threadIdx.x+blockIdx.x*blockDim.x;
+	write_2_ptr[thid] = read_in_ptr[thid];
 
 
 }
