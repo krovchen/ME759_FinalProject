@@ -340,7 +340,7 @@ bool help_fcn(help_input_from_main help_input, double* out){
 
 __global__ void dataKernel( double* data, int nsteps){
 //this adds a value to a variable stored in global memory
-	int thid = threadIdx.x+blockIdx.x*blockDim;
+	int thid = threadIdx.x+blockIdx.x*blockDim.x;
 	//data[thid] = 0;
 	int i = 0;
 	bool wait = 1;
