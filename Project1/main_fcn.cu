@@ -249,7 +249,8 @@ __global__ void dataKernel( double* data, int nsteps){
 	//clock_t now;
 
 	while(i < nsteps){
-		data[thid] = data[thid]+.1;
+		data[thid] = data[thid]+.1*thid;
+		i=i+1;
 	}
 
 	/*	clock_t start = clock64();
