@@ -189,8 +189,8 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 	sval = sval + stop.tv_usec-start.tv_usec; //us
 
 	cout << "Time between message request and message receive in us is: " << sval << endl;
-	for(i = 0; i < numElems; i++)
-		cout << "Main update received " << help_out[i] << endl;
+	//for(i = 0; i < numElems; i++)
+		cout << "Main update received " << help_out[0] << endl;
 	*request_done = 0;
 	sleep(.2);
 
@@ -205,8 +205,8 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 	gettimeofday(&stop, NULL);
 	 sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
 	sval = sval + stop.tv_usec-start.tv_usec; //us
-	for(i = 0; i < numElems; i++)
-		cout << "Main update received " << help_out[i] << endl;
+	//for(i = 0; i < numElems; i++)
+		cout << "Main update received " << help_out[0] << endl;
 
 	cout << "Time between message request and message receive in us is: " << sval << endl;
 
@@ -223,8 +223,8 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
  	sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
 		sval = sval + stop.tv_usec-start.tv_usec; //us
 			cout << "Time between message request and message receive in us is: " << sval << endl;
-	for(i = 0; i < numElems; i++)
-		cout << "Main update received " << help_out[i] << endl;
+	//for(i = 0; i < numElems; i++)
+		cout << "Main update received " << help_out[0] << endl;
 	*request_done = 0;
 	sleep(.5);
 
@@ -239,8 +239,8 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
  	sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
 		sval = sval + stop.tv_usec-start.tv_usec; //us
 			cout << "Time between message request and message receive in us is: " << sval << endl;
-	for(i = 0; i < numElems; i++)
-		cout << "Main update received " << help_out[i] << endl;
+	//for(i = 0; i < numElems; i++)
+		cout << "Main update received " << help_out[0] << endl;
 	*request_done = 0;
 	sleep(.5);
 
@@ -254,8 +254,8 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
  	sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
 		sval = sval + stop.tv_usec-start.tv_usec; //us
 			cout << "Time between message request and message receive in us is: " << sval << endl;
-	for(i = 0; i < numElems; i++)
-		cout << "Main update received " << help_out[i] << endl;
+	//for(i = 0; i < numElems; i++)
+		cout << "Main update received " << help_out[0] << endl;
 	*request_done = 0;
 	sleep(.5);
 
@@ -269,8 +269,8 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
  	sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
 		sval = sval + stop.tv_usec-start.tv_usec; //us
 			cout << "Time between message request and message receive in us is: " << sval << endl;
-	for(i = 0; i < numElems; i++)
-		cout << "Main update received " << help_out[i] << endl;
+	//for(i = 0; i < numElems; i++)
+		cout << "Main update received " << help_out[0] << endl;
 	*request_done = 0;
 	sleep(.5);
 
@@ -284,8 +284,8 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
  	sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
 		sval = sval + stop.tv_usec-start.tv_usec; //us
 			cout << "Time between message request and message receive in us is: " << sval << endl;
-	for(i = 0; i < numElems; i++)
-		cout << "Main update received " << help_out[i] << endl;
+	//for(i = 0; i < numElems; i++)
+		cout << "Main update received " << help_out[0] << endl;
 	*request_done = 0;
 	sleep(.5);
 
@@ -299,8 +299,8 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
  	sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
 		sval = sval + stop.tv_usec-start.tv_usec; //us
 			cout << "Time between message request and message receive in us is: " << sval << endl;
-	for(i = 0; i < numElems; i++)
-		cout << "Main update received " << help_out[i] << endl;
+	//for(i = 0; i < numElems; i++)
+		cout << "Main update received " << help_out[0] << endl;
 	*request_done = 0;
 	//sleep(.5);
 
