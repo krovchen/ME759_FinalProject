@@ -3,7 +3,7 @@
 #include<stdio.h>
 #include "omp.h"
 #include <unistd.h>
-#include <time.h>
+#include <sys/time.h>
 
 using namespace std;
 
@@ -152,7 +152,7 @@ int main()
 
 bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_ptr)
 {	
-	struct timespec stop, start;
+	struct timeval stop, start;
 	bool *call_help = CF.call_help;
 	//volatile bool *help_rdy = CF.help_rdy;
 	volatile bool *request_val = CF.request_val;
@@ -173,7 +173,7 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 
 	//if interrupt not allowed, then request value from help
 
-	clock_gettime(CLOCK_MONOTONIC_RAW,&start);
+	gettimeofday(&start, NULL);
 	if(allow_interrupt == 0){	
 		//cout << "Main requesting function update" << endl;
 		*request_val = 1;
@@ -183,10 +183,11 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 
 
 	//cout << "Main update received " << *help_out << endl;
-	clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
-	int sval = stop.tv_nsec-start.tv_nsec;
+	gettimeofday(&stop, NULL);
+	double sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
+	sval = sval + stop.tv_usec-start.tv_usec; //us
 
-	cout << "Time between message request and message receive in ns is: " << sval << endl;
+	cout << "Time between message request and message receive in us is: " << sval << endl;
 cout << "Main update received " << *help_out << endl;
 	*request_done = 0;
 	sleep(.2);
@@ -194,25 +195,31 @@ cout << "Main update received " << *help_out << endl;
 	cout << "Main Requestiong Second function update " << endl;
 	//cout << "Current Request Val (shoudl be 0) = " << *request_val << endl;
 	
-	clock_gettime(CLOCK_MONOTONIC_RAW,&start);
+	gettimeofday(&start, NULL);
 	*request_val = 1;
 	while(*request_done == 0)
 		sleep(.00001);
 	//cout << "Main update received " << *help_out << endl;
-	clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
-	 sval = stop.tv_nsec-start.tv_nsec;
+	gettimeofday(&stop, NULL);
+	 sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
+		sval = sval + stop.tv_usec-start.tv_usec; //us
 cout << "Main update received " << *help_out << endl;
 
 	cout << "Time between message request and message receive in ns is: " << sval << endl;
 
 	*request_done = 0;
-	sleep(.2);
+	sleep(.5);
 
 	cout << "Main Requestiong Third function update " << endl;
+	gettimeofday(&start, NULL);
 	*request_val = 1;
 	while(*request_done == 0)
-		sleep(.1);
-	cout << "Main update received " << *help_out << endl;
+		sleep(.00001);
+	gettimeofday(&stop, NULL);
+	//cout << "Main update received " << *help_out << endl;
+ sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
+		sval = sval + stop.tv_usec-start.tv_usec; //us
+cout << "Main update received " << *help_out << endl;
 	*request_done = 0;
 	//sleep(2);
 	cout << "Exiting Main" << endl;
