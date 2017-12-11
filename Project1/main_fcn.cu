@@ -3,6 +3,7 @@
 #include<stdio.h>
 #include "omp.h"
 #include <unistd.h>
+#include <time.h>
 
 using namespace std;
 
@@ -115,7 +116,7 @@ int main()
 					CF.call_help_cmd = 0;
 					cout <<"Launching Helper Kernel" << endl;
 					//*help_rdy =  help_fcn(*help_input, out);
-					dataKernel<<<1,1>>>(dArray, 10000);
+					dataKernel<<<1,1>>>(dArray, 1000);
 				}
 				if(CF.help_running_cmd == 1 && allow_interrupt == 0 && CF.request_val_cmd == 1){	
 					cout <<"Launching Monitor Kernel" << endl;
@@ -151,6 +152,7 @@ int main()
 
 bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_ptr)
 {	
+	struct timeval stop, start;
 	bool *call_help = CF.call_help;
 	//volatile bool *help_rdy = CF.help_rdy;
 	volatile bool *request_val = CF.request_val;
@@ -170,27 +172,40 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 	sleep(.01);
 
 	//if interrupt not allowed, then request value from help
+
+	gettimeofday(&stop, NULL);
 	if(allow_interrupt == 0){	
-		cout << "Main requesting function update" << endl;
+		//cout << "Main requesting function update" << endl;
 		*request_val = 1;
 		while(*request_done == 0)
-			sleep(.1);
+			sleep(.00001);
 	}
 
 
-	cout << "Main update received " << *help_out << endl;
+	//cout << "Main update received " << *help_out << endl;
+	gettimeofday(&stop, NULL);
+	int sval = stop.tv_sec-start.tv_sec;
+	int uval = stop.tv_usec-start.tv_usec;
+	cout << "Time between message request and message receive is: " << sval+uval*.000001 << endl;
+
 	*request_done = 0;
-	sleep(.02);
+	sleep(.2);
 
 	cout << "Main Requestiong Second function update " << endl;
-	cout << "Current Request Val (shoudl be 0) = " << *request_val << endl;
+	//cout << "Current Request Val (shoudl be 0) = " << *request_val << endl;
 	
+	gettimeofday(&stop, NULL);
 	*request_val = 1;
 	while(*request_done == 0)
-		sleep(.1);
-	cout << "Main update received " << *help_out << endl;
+		sleep(.00001);
+	//cout << "Main update received " << *help_out << endl;
+	gettimeofday(&stop, NULL);
+	sval = stop.tv_sec-start.tv_sec;
+	uval = stop.tv_usec-start.tv_usec;
+	cout << "Time between message request and message receive is: " << sval+uval*.000001 << endl;
+
 	*request_done = 0;
-	sleep(2);
+	sleep(.2);
 
 	cout << "Main Requestiong Third function update " << endl;
 	*request_val = 1;
