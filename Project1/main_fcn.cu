@@ -9,19 +9,17 @@ using namespace std;
 
 //global variables
 const bool allow_interrupt = 0;
-const int N = 5;
+const int N = 1;
 
 
 struct help_input_from_main{
 	static const int length = N;
 	double inp1[N];
-	double inp2[N];
 
-	void initS(double* v1, double* v2){
+	void initS(double* v1){
 		int i = 0;
 		for(i = 0; i < N; i++){
 			inp1[i] = v1[i];
-			inp2[i] = v2[i];
 		}
 	}
 
@@ -45,7 +43,7 @@ struct ctrl_flags{
 	volatile bool *request_done = &req_delivered_cmd;};
 
 //function declarations -- helper and main
-bool main_fcn(ctrl_flags CF, double * out_data, help_input_from_main* help_input);
+bool main_fcn(ctrl_flags CF, double * out_data, help_input_from_main * help);
 bool help_fcn(help_input_from_main help_input, double* out);
 bool init_help(help_input_from_main help_input);
 
@@ -59,22 +57,23 @@ int main()
 	//define booleans needed for logic
 	ctrl_flags CF;
 
+	const int numElems = 2;
 	//define interface between helper and main i.e.: what is returned
-	double out_val =0.0;
+	//double out_val =0.0;
 
 
-	double *out = &out_val;
+	double out[numElems];
 
 	help_input_from_main test_input;	
 	help_input_from_main* help_input = &test_input;
 
-	static double inp1[N] = {1,2,3,4,5};
-	static double inp2[N] = {1,2,3,4,5};
-
-	(*help_input).initS(&inp1[0], &inp2[0]);	
+	static double inp1[N] = {5};
 
 
-	#pragma omp parallel num_threads(2) shared(CF)
+	(*help_input).initS(&inp1[0]);	
+
+
+	#pragma omp parallel num_threads(2) shared(CF, help_input)
 	{
 
 		if(omp_get_thread_num() == 0){
@@ -85,7 +84,7 @@ int main()
 
 		if(omp_get_thread_num() == 1){
 			cout <<"Running CUDA init" << endl;
-			const int numElems = 1;
+
 			double hostArray[numElems];
 			double *dArray;
 
@@ -93,17 +92,18 @@ int main()
 
 			//pointer of helper function return	
 
-			double *h_data;
-			double *monitor_data;
+			double h_data[numElems];
+			double monitor_data[numElems];
+			
 
-		
+			
 
 			cudaMalloc((void**)&dArray, sizeof(double)*numElems);
 			//cudaMalloc((void**)&dArray_Held, sizeof(int)*numElems);
 			cudaMemset(dArray, 0, numElems*sizeof(double));
 			//cudaMemset(dArray_Held, 0, numElems*sizeof(int));
-			cudaMalloc((void**)&monitor_data, sizeof(double));
-			cudaMallocHost((void**)&h_data, sizeof(double));
+			cudaMalloc((void**)&monitor_data, sizeof(double)*numElems);
+			cudaMallocHost((void**)&h_data, sizeof(double)*numElems);
 			cudaStream_t stream1;
 			cudaStreamCreateWithFlags(&stream1, cudaStreamNonBlocking);
 			//cudaStreamCreate(&stream1);
@@ -116,14 +116,14 @@ int main()
 					CF.call_help_cmd = 0;
 					cout <<"Launching Helper Kernel" << endl;
 					//*help_rdy =  help_fcn(*help_input, out);
-					dataKernel<<<1,1>>>(dArray, 1000);
+					dataKernel<<<1,numElems>>>(dArray, 1000);
 				}
 				if(CF.help_running_cmd == 1 && allow_interrupt == 0 && CF.request_val_cmd == 1){	
 					cout <<"Launching Monitor Kernel" << endl;
 					//cudaStreamSynchronize(stream1);
 					monitorKernel<<<1, 1,0, stream1>>>(monitor_data, dArray);
 					cout <<"Launching Async Mem Cpy" << endl;
-					cudaMemcpyAsync(h_data, monitor_data, sizeof(double), cudaMemcpyDeviceToHost, stream1);
+					cudaMemcpyAsync(h_data, monitor_data, numElems*sizeof(double), cudaMemcpyDeviceToHost, stream1);
 					cudaStreamSynchronize(stream1);
 					CF.request_val_cmd = 0;
 					*out = *h_data;
@@ -132,8 +132,9 @@ int main()
 			}
 
 
-			cudaMemcpy(h_data, dArray, sizeof(double), cudaMemcpyDeviceToHost);
-			cout << "Value copied over: "  << *h_data << endl;
+			cudaMemcpy(h_data, dArray, sizeof(double)*numElems, cudaMemcpyDeviceToHost);
+			for(i = 0; i < numElems; i++)
+				cout << "Value copied over: "  << h_data[i] << endl;
 
 			cudaFree(dArray);
 			cudaFree(monitor_data);
@@ -159,11 +160,11 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 	volatile bool *request_done = CF.request_done;
 
 	//initialize data for input to helper function
-	double inp1[N] = {1,2,3,4,5};
+	double inp1[N] = {4};
 	
 
 	//set values of helper function input
-	(*help_input_ptr).initS(inp1, inp1);
+	(*help_input_ptr).initS(inp1);
 	//ask to start help function	
 	cout << "Main calling help function for 1st time" << endl;
 	*call_help = 1;
@@ -308,7 +309,7 @@ bool help_fcn(help_input_from_main help_input, double* out){
 	//int j = 1;
 	int i = 0;
 	double* inp1 = help_input.inp1;
-	double* inp2 = help_input.inp2;
+	double* inp2 = help_input.inp1;
 	
 	for(i = 0; i < N; i++){
 
@@ -325,18 +326,14 @@ bool help_fcn(help_input_from_main help_input, double* out){
 	return 1;
 }
 
-bool init_help(help_input_from_main help_input){
-	
 
-return 1;
-
-}
 
 
 
 __global__ void dataKernel( double* data, int nsteps){
 //this adds a value to a variable stored in global memory
-	*data = 0;
+	int thid = threadIdx.x;
+	data[thid] = 0;
 	int i = 0;
 	bool wait = 1;
 
@@ -344,7 +341,7 @@ __global__ void dataKernel( double* data, int nsteps){
 	clock_t now;
 
 	while(i < nsteps){
-		*data = *data+.1;
+		data[thid] = data[thid]+.1;
 
 		clock_t start = clock64();
 		i = i+1;
