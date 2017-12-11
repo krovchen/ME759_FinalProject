@@ -178,7 +178,7 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 		//cout << "Main requesting function update" << endl;
 		*request_val = 1;
 		while(*request_done == 0)
-			sleep(.00001);
+			sleep(.00000001);
 	}
 
 
@@ -198,14 +198,14 @@ cout << "Main update received " << *help_out << endl;
 	gettimeofday(&start, NULL);
 	*request_val = 1;
 	while(*request_done == 0)
-		sleep(.00001);
+		sleep(.00000001);
 	//cout << "Main update received " << *help_out << endl;
 	gettimeofday(&stop, NULL);
 	 sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
-		sval = sval + stop.tv_usec-start.tv_usec; //us
+	sval = sval + stop.tv_usec-start.tv_usec; //us
 cout << "Main update received " << *help_out << endl;
 
-	cout << "Time between message request and message receive in ns is: " << sval << endl;
+	cout << "Time between message request and message receive in us is: " << sval << endl;
 
 	*request_done = 0;
 	sleep(.5);
@@ -214,11 +214,12 @@ cout << "Main update received " << *help_out << endl;
 	gettimeofday(&start, NULL);
 	*request_val = 1;
 	while(*request_done == 0)
-		sleep(.00001);
+		sleep(.00000001);
 	gettimeofday(&stop, NULL);
 	//cout << "Main update received " << *help_out << endl;
  sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
 		sval = sval + stop.tv_usec-start.tv_usec; //us
+			cout << "Time between message request and message receive in us is: " << sval << endl;
 cout << "Main update received " << *help_out << endl;
 	*request_done = 0;
 	//sleep(2);
