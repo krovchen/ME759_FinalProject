@@ -10,7 +10,7 @@ using namespace std;
 //global variables
 const bool allow_interrupt = 0;
 const int N = 1;
-const int numElems =512;
+const int numElems =1;
 
 struct help_input_from_main{
 	static const int length = N;
@@ -62,7 +62,7 @@ int main()
 	//double out_val =0.0;
 
 
-	double out[numElems] = {0,0};
+	double out[numElems];
 
 	help_input_from_main test_input;	
 	help_input_from_main* help_input = &test_input;
@@ -162,6 +162,10 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 	//initialize data for input to helper function
 	double inp1[N] = {4};
 	int i = 0;
+	int numReads = 10;
+	double sval;
+	double sum_times = 0;
+	int j = 0;
 
 	//set values of helper function input
 	(*help_input_ptr).initS(inp1);
@@ -169,142 +173,36 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 	cout << "Main calling help function for 1st time" << endl;
 	*call_help = 1;
 	
-	//some code/processing goes here
+	//=====USER CODE before calling help GOES HERE==========
 	sleep(.01);
 
-	//if interrupt not allowed, then request value from help
 
+	for(j = 0; j < numReads; j++){
 	gettimeofday(&start, NULL);
-	if(allow_interrupt == 0){	
-		//cout << "Main requesting function update" << endl;
+
+		//BELOW IS WHERE YOU CALL THE HELPER READ FROM MAIN
 		*request_val = 1;
 		while(*request_done == 0)
 			sleep(.00000001);
-	}
+		//ABOVE IS WHERE YOU CALL THE HELPER READ FROM MAIN -- now help value(s) is in *help_out
 
-
-	//cout << "Main update received " << *help_out << endl;
 	gettimeofday(&stop, NULL);
-	double sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
+	sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
 	sval = sval + stop.tv_usec-start.tv_usec; //us
 
 	cout << "Time between message request and message receive in us is: " << sval << endl;
-	for(i = 0; i < 4; i++)
-		cout << "Main update received " << help_out[0] << endl;
+	for(i = 0; i < 3; i++)
+		cout << "Main update received " << help_out[i] << endl;
 	*request_done = 0;
+	sum_times = sum_times+sval;
 	sleep(.2);
 
-	cout << "Main Requestiong Second function update " << endl;
-	//cout << "Current Request Val (shoudl be 0) = " << *request_val << endl;
+	}
+
 	
-	gettimeofday(&start, NULL);
-	*request_val = 1;
-	while(*request_done == 0)
-		sleep(.00000001);
-	//cout << "Main update received " << *help_out << endl;
-	gettimeofday(&stop, NULL);
-	 sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
-	sval = sval + stop.tv_usec-start.tv_usec; //us
-	//for(i = 0; i < numElems; i++)
-		cout << "Main update received " << help_out[0] << endl;
+	cout << "Average read time between message request and message received in us is: " << sum_times/numReads << endl;
 
-	cout << "Time between message request and message receive in us is: " << sval << endl;
-
-	*request_done = 0;
-	sleep(.5);
-
-	cout << "Main Requestiong Third function update " << endl;
-	gettimeofday(&start, NULL);
-	*request_val = 1;
-	while(*request_done == 0)
-		sleep(.00000001);
-	gettimeofday(&stop, NULL);
-	//cout << "Main update received " << *help_out << endl;
- 	sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
-		sval = sval + stop.tv_usec-start.tv_usec; //us
-			cout << "Time between message request and message receive in us is: " << sval << endl;
-	//for(i = 0; i < numElems; i++)
-		cout << "Main update received " << help_out[0] << endl;
-	*request_done = 0;
-	sleep(.5);
-
-
-	cout << "Main Requestiong Third function update " << endl;
-	gettimeofday(&start, NULL);
-	*request_val = 1;
-	while(*request_done == 0)
-		sleep(.00000001);
-	gettimeofday(&stop, NULL);
-	//cout << "Main update received " << *help_out << endl;
- 	sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
-		sval = sval + stop.tv_usec-start.tv_usec; //us
-			cout << "Time between message request and message receive in us is: " << sval << endl;
-	//for(i = 0; i < numElems; i++)
-		cout << "Main update received " << help_out[0] << endl;
-	*request_done = 0;
-	sleep(.5);
-
-	cout << "Main Requestiong Third function update " << endl;
-	gettimeofday(&start, NULL);
-	*request_val = 1;
-	while(*request_done == 0)
-		sleep(.00000001);
-	gettimeofday(&stop, NULL);
-	//cout << "Main update received " << *help_out << endl;
- 	sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
-		sval = sval + stop.tv_usec-start.tv_usec; //us
-			cout << "Time between message request and message receive in us is: " << sval << endl;
-	//for(i = 0; i < numElems; i++)
-		cout << "Main update received " << help_out[0] << endl;
-	*request_done = 0;
-	sleep(.5);
-
-	cout << "Main Requestiong Third function update " << endl;
-	gettimeofday(&start, NULL);
-	*request_val = 1;
-	while(*request_done == 0)
-		sleep(.00000001);
-	gettimeofday(&stop, NULL);
-	//cout << "Main update received " << *help_out << endl;
- 	sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
-		sval = sval + stop.tv_usec-start.tv_usec; //us
-			cout << "Time between message request and message receive in us is: " << sval << endl;
-	//for(i = 0; i < numElems; i++)
-		cout << "Main update received " << help_out[0] << endl;
-	*request_done = 0;
-	sleep(.5);
-
-	cout << "Main Requestiong Third function update " << endl;
-	gettimeofday(&start, NULL);
-	*request_val = 1;
-	while(*request_done == 0)
-		sleep(.00000001);
-	gettimeofday(&stop, NULL);
-	//cout << "Main update received " << *help_out << endl;
- 	sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
-		sval = sval + stop.tv_usec-start.tv_usec; //us
-			cout << "Time between message request and message receive in us is: " << sval << endl;
-	//for(i = 0; i < numElems; i++)
-		cout << "Main update received " << help_out[0] << endl;
-	*request_done = 0;
-	sleep(.5);
-
-	cout << "Main Requestiong Third function update " << endl;
-	gettimeofday(&start, NULL);
-	*request_val = 1;
-	while(*request_done == 0)
-		sleep(.00000001);
-	gettimeofday(&stop, NULL);
-	//cout << "Main update received " << *help_out << endl;
- 	sval = (stop.tv_sec-start.tv_sec)*1000000; //sec to us
-		sval = sval + stop.tv_usec-start.tv_usec; //us
-			cout << "Time between message request and message receive in us is: " << sval << endl;
-	//for(i = 0; i < numElems; i++)
-		cout << "Main update received " << help_out[0] << endl;
-	*request_done = 0;
-	//sleep(.5);
-
-
+	//=======USER code AFTER calling helper goes here======
 
 	cout << "Exiting Main" << endl;
 	
