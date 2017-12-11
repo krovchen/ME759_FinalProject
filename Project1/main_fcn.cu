@@ -126,7 +126,8 @@ int main()
 					cudaMemcpyAsync(h_data, monitor_data, numElems*sizeof(double), cudaMemcpyDeviceToHost, stream1);
 					cudaStreamSynchronize(stream1);
 					CF.request_val_cmd = 0;
-					*out = *h_data;
+					for(i = 0; i < numElems; i++)
+						out[i] = h_data[i];
 					CF.req_delivered_cmd = 1;
 				}	
 			}
