@@ -10,7 +10,7 @@ using namespace std;
 //global variables
 const bool allow_interrupt = 0;
 const int N = 1;
-const int numElems =64;
+const int numElems =1024;
 
 struct help_input_from_main{
 	static const int length = N;
@@ -133,7 +133,7 @@ int main()
 
 
 			cudaMemcpy(h_data, dArray, sizeof(double)*numElems, cudaMemcpyDeviceToHost);
-			for(i = 0; i < numElems; i++)
+			for(i = 0; i < 5; i++)
 				cout << "Value copied over: "  << h_data[i] << endl;
 
 			cudaFree(dArray);
