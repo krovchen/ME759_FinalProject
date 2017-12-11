@@ -10,7 +10,7 @@ using namespace std;
 //global variables
 const bool allow_interrupt = 0;
 const int N = 1;
-const int numElems = 1;
+const int numElems =2;
 
 struct help_input_from_main{
 	static const int length = N;
@@ -62,7 +62,7 @@ int main()
 	//double out_val =0.0;
 
 
-	double out[numElems];
+	double out[numElems] = {0,0};
 
 	help_input_from_main test_input;	
 	help_input_from_main* help_input = &test_input;
@@ -73,7 +73,7 @@ int main()
 	(*help_input).initS(&inp1[0]);	
 
 
-	#pragma omp parallel num_threads(2) shared(CF, help_input)
+	#pragma omp parallel num_threads(2) shared(CF, help_input, out)
 	{
 
 		if(omp_get_thread_num() == 0){
@@ -92,8 +92,8 @@ int main()
 
 			//pointer of helper function return	
 
-			double h_data[numElems];
-			double monitor_data[numElems];
+			double* h_data;
+			double* monitor_data;
 			
 
 			
