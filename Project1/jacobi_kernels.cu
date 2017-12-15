@@ -128,7 +128,7 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 	*call_help = 1;
 	
 	//=====USER CODE before calling help GOES HERE==========
-	sleep(.2);
+	sleep(.5);
 
 
 	for(j = 0; j < numReads; j++){
