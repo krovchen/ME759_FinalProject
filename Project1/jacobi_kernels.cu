@@ -110,7 +110,7 @@ __global__ void jacobiOptimizedOnDevice(double* x_next, double* A, double* x_now
 
 
 
-bool help_fcn(help_input_from_main help_input, double* out, bool* kernel_rdy){
+bool help_fcn(help_input_from_main help_input, double* out, volatile bool* kernel_rdy){
 	//int j = 1;
 	int k = 0;
 	double* x_now_d;
