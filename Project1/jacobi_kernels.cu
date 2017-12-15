@@ -110,7 +110,7 @@ __global__ void jacobiOptimizedOnDevice(double* x_next, double* A, double* x_now
 
 
 
-bool help_fcn(help_input_from_main help_input, double* out){
+bool help_fcn(help_input_from_main help_input, double* out, bool* kernel_rdy){
 	//int j = 1;
 	int k = 0;
 	double* x_now_d;
@@ -129,7 +129,8 @@ bool help_fcn(help_input_from_main help_input, double* out){
 		cout << "copied from b: " << b_h[k] << endl;
 
 	}
-
+	
+	*kernel_rdy = 1;
         for (k=0; k<iter; k++)
         {
             if (k%2)
@@ -180,7 +181,8 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 	*call_help = 1;
 	
 	//=====USER CODE before calling help GOES HERE==========
-	sleep(.5);
+	while(CF.kernel_rdy_cmd == 0)
+		sleep(.1);
 
 
 	for(j = 0; j < numReads; j++){

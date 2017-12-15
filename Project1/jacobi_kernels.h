@@ -82,7 +82,7 @@ struct help_input_from_main{
 
 
  bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_ptr);
- bool help_fcn(help_input_from_main help_input, double* out);
+ bool help_fcn(help_input_from_main help_input, double* out, bool* kernl_rdy);
 //__global__ void dataKernel( double* data, int nsteps);
 __global__ void monitorKernel(double * write_2_ptr,  double * read_in_ptr);
 __global__ void jacobiOptimizedOnDevice(double* x_next, double* A, double* x_now, double* b, int Ni, int Nj);
