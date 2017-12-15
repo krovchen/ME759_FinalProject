@@ -52,30 +52,43 @@
 //global variables
 const int Ni = 64;
 const int Nj = 64;
-int numElems =Ni*Nj;
-int tileSize = 64;
-int iter = 10000;
+const int numElems =Ni*Nj;
+static int tileSize = 64;
+static int iter = 10000;
+static int els_to_read = 64;
 
 struct help_input_from_main{
-	static const int length = Ni;
-	double inp1[ Ni];
+	
+	//pointers to things on device
+	double *x_now_d;
+	double *x_next_d;
+	double *A_d;
+	double *b_d;
 
-	void initS(double* v1){
+	double b_h[Ni];
+	double A_h[numElems];
+	int nTiles;
+
+	void initS(double* v1, double* Ain){
 		int i = 0;
 		for(i = 0; i <  Ni; i++){
-			inp1[i] = v1[i];
+			b_h[i] = v1[i];
 		}
+		for(i = 0; i < numElems; i++)
+			A_h[i] = Ain[i];
 	}
 
 };
 
 
-bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_ptr);
-bool help_fcn(help_input_from_main help_input, double* out);
-__global__ void dataKernel( double* data, int nsteps);
+ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_ptr);
+ bool help_fcn(help_input_from_main help_input, double* out);
+//__global__ void dataKernel( double* data, int nsteps);
 __global__ void monitorKernel(double * write_2_ptr,  double * read_in_ptr);
+__global__ void jacobiOptimizedOnDevice(double* x_next, double* A, double* x_now, double* b, int Ni, int Nj);
 
-
+void gen_b_vec(double* inp1);
+void gen_A_mat(double* A);
 
 
 #endif // _JACOBIKERNEL_H_

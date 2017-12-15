@@ -21,19 +21,18 @@ debug : LDFLAGS := -fsanitize=address
 debug : ARCH :=
 debug : $(EXEC)
 
-all : problem1A
+all : bare test
 
 
 
-problem1A: main_fcn.cu 
-	nvcc main_fcn.cu -Xcompiler "-fopenmp" -arch compute_35
-
-
-
+bare: main_fcn.cu
+	nvcc main_fcn.cu test_kernels.cu -Xcompiler "-fopenmp" -arch compute_35 -o project_test
+test: main_fcn_j.cu
+	nvcc main_fcn_j.cu jacobi_kernels.cu -Xcompiler "-fopenmp" -arch compute_35 -o jacobi_test
 
 
 # TODO: add targets for building executables
 
 .PHONY: clean
 clean:
-	rm -f problem1A problem1B problem2A problem2B
+	rm -f project_test jacobi_test
