@@ -79,7 +79,7 @@ int main()
     		
     	//dim3 dGrid(gridHeight, gridWidth), dBlock(tileSize, tileSize);
 
-	#pragma omp parallel num_threads(3) shared(CF, help_input, out)
+	#pragma omp parallel num_threads(3) shared(CF, help_input, out, monitor_data, x_now_d)
 	{
 
 		if(omp_get_thread_num() == 0){
@@ -92,8 +92,8 @@ int main()
 			while(CF.main_done_cmd == 0){
 				if(CF.help_running_cmd == 1 && CF.request_val_cmd == 1){	
 					cout <<"Launching Monitor Kernel" << endl;
-					cudaStreamSynchronize(stream1);
-					monitorKernel<<<numBlocks, numThreads,0, stream1>>>(monitor_data, test_input.x_now_d);
+					//cudaStreamSynchronize(stream1);
+					monitorKernel<<<numBlocks, numThreads,0, stream1>>>(monitor_data, x_now_d);
 					cout <<"Launching Async Mem Cpy" << endl;
 					cudaMemcpyAsync(h_data, monitor_data, Ni*sizeof(double), cudaMemcpyDeviceToHost, stream1);
 					cudaStreamSynchronize(stream1);
@@ -101,7 +101,7 @@ int main()
 					for(i = 0; i < Ni; i++){
 						out[i] = h_data[i];
 						if(i < 3)
-							cout << "output from monitor: " << out[i] << endl;
+							cout << "output from monitor: " << h_data[i] << endl;
 
 					}
 					CF.req_delivered_cmd = 1;
