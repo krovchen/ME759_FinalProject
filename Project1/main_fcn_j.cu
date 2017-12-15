@@ -98,7 +98,8 @@ int main()
 					CF.request_val_cmd = 0;
 					for(i = 0; i < Ni; i++){
 						out[i] = h_data[i];
-						cout << "value copied in monitor kernel: " << h_data[i];
+						if(i < 6)
+						cout << "value copied in monitor kernel: " << h_data[i] << endl;
 					}
 					CF.req_delivered_cmd = 1;
 				}	
