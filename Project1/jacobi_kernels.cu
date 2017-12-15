@@ -46,7 +46,7 @@ __global__ void monitorKernel(double * write_2_ptr,  double * read_in_ptr){
 
 __global__ void jacobiOptimizedOnDevice(double* x_next, double* A, double* x_now, double* b, int Ni, int Nj)
 {
-    /    float sigma = 0.0;
+        float sigma = 0.0;
     int idx = threadIdx.x;
     for (int j=0; j<Nj; j++)
     {
