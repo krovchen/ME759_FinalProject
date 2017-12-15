@@ -96,8 +96,10 @@ int main()
 					cudaMemcpyAsync(h_data, monitor_data, Ni*sizeof(double), cudaMemcpyDeviceToHost, stream1);
 					cudaStreamSynchronize(stream1);
 					CF.request_val_cmd = 0;
-					for(i = 0; i < Ni; i++)
+					for(i = 0; i < Ni; i++){
 						out[i] = h_data[i];
+						cout << "value copied in monitor kernel: " << h_data[i];
+					}
 					CF.req_delivered_cmd = 1;
 				}	
 			}	
