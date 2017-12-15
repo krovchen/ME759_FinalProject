@@ -117,7 +117,7 @@ int main()
 					CF.help_running_cmd = 1;
 					CF.call_help_cmd = 0;
 					CF.kernel_rdy_cmd = 0;
-					CF.help_rdy_cmd = help_fcn(*help_input, out, CF.kernel_rdy);
+					CF.help_rdy_cmd = help_fcn(*help_input, out, &CF.kernel_rdy_cmd);
 					//dataKernel<<<nTiles, tileSize >>>(dArray, 1000);
 
 				}
