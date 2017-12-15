@@ -200,7 +200,7 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 	*request_done = 0;
 	if(j > 0)  //skip the first call because its bad fro some reason
 		sum_times = sum_times+sval;
-	sleep(.6);
+	sleep(.2);
 
 	}
 
