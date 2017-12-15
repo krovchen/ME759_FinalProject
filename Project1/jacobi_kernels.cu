@@ -118,8 +118,11 @@ bool help_fcn(help_input_from_main help_input, double* out){
 	double *x_next_d = help_input.x_next_d;
 	double *b_d = help_input.b_d;
 	double nTiles = help_input.nTiles;
-	
-	
+	double *b_h = help_input.b_h;
+	double *A_h = help_input.A_h;	
+
+	cudaMemcpy(b_d, &b_h, sizeof(double)*Ni, cudaMemcpyHostToDevice);
+	cudaMemcpy(A_d, &A_h, sizeof(double)*numElems, cudaMemcpyHostToDevice);
         for (k=0; k<iter; k++)
         {
             if (k%2)
