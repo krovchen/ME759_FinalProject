@@ -66,9 +66,11 @@ int main()
 	cudaStream_t stream1;
 	cudaStreamCreateWithFlags(&stream1, cudaStreamNonBlocking);
 	
-	if(els_to_read > 1024){			//for now just assume numElems is multiple of 1024
+	numBlocks = 1;
+	numThreads = els_t_read;
+	if(els_to_read > 1024){			//for now just assume numElems is multiple of 1024 or less
 		numThreads = 1024;
-		numBlocks = numElems/numThreads;
+		numBlocks = els_to_read/numThreads;
 	}
 	 // Optimized kernel
    	 
@@ -91,14 +93,14 @@ int main()
 				if(CF.help_running_cmd == 1 && CF.request_val_cmd == 1){	
 					cout <<"Launching Monitor Kernel" << endl;
 					//cudaStreamSynchronize(stream1);
-					monitorKernel<<<numBlocks, numThreads,0, stream1>>>(monitor_data, x_now_d);
+					monitorKernel<<<numBlocks, numThreads,0, stream1>>>(monitor_data, test_input.x_now_d);
 					cout <<"Launching Async Mem Cpy" << endl;
 					cudaMemcpyAsync(h_data, monitor_data, Ni*sizeof(double), cudaMemcpyDeviceToHost, stream1);
 					cudaStreamSynchronize(stream1);
 					CF.request_val_cmd = 0;
 					for(i = 0; i < Ni; i++){
 						out[i] = h_data[i];
-						if(i < 6)
+						if(i < 3)
 						cout << "value copied in monitor kernel: " << h_data[i] << endl;
 					}
 					CF.req_delivered_cmd = 1;
