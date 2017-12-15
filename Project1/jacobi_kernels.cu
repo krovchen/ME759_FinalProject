@@ -27,7 +27,7 @@ void gen_A_mat(double* A)
 		temp = rand();
 		A[i] = (double)temp/RAND_MAX;
 		if(i == d*Ni+d){			//this part makes the matrix diagonally dominant
-			A[i] = A[i]+Ni;
+			A[i] = A[i];
 			d=d+1;
 		
 		}
@@ -103,7 +103,7 @@ __global__ void jacobiOptimizedOnDevice(double* x_next, double* A, double* x_now
         }*/
 
         x_next[idx] = (b[idx] - sigma) / A[idx_Ai + idx];
-	__syncthreads();
+	//__syncthreads();
     }
 }
 
@@ -178,7 +178,7 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 	*call_help = 1;
 	
 	//=====USER CODE before calling help GOES HERE==========
-	sleep(.2);
+	sleep(.1);
 
 
 	for(j = 0; j < numReads; j++){
