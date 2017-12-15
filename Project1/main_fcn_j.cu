@@ -93,10 +93,10 @@ int main()
 					//cudaStreamSynchronize(stream1);
 					monitorKernel<<<numBlocks, numThreads,0, stream1>>>(monitor_data, x_now_d);
 					cout <<"Launching Async Mem Cpy" << endl;
-					cudaMemcpyAsync(h_data, monitor_data, numElems*sizeof(double), cudaMemcpyDeviceToHost, stream1);
+					cudaMemcpyAsync(h_data, monitor_data, Ni*sizeof(double), cudaMemcpyDeviceToHost, stream1);
 					cudaStreamSynchronize(stream1);
 					CF.request_val_cmd = 0;
-					for(i = 0; i < numElems; i++)
+					for(i = 0; i < Ni; i++)
 						out[i] = h_data[i];
 					CF.req_delivered_cmd = 1;
 				}	
