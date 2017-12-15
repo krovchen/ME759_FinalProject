@@ -53,7 +53,7 @@
 const int Ni = 64;
 const int Nj = 64;
 const int numElems =Ni*Nj;
-static int tileSize = Ni;
+static int tileSize = 64;
 static int iter = 100000;
 static int els_to_read = 64;
 
