@@ -27,7 +27,7 @@ void gen_A_mat(double* A)
 		temp = rand();
 		A[i] = (double)temp/RAND_MAX;
 		if(i == d*Ni+d){			//this part makes the matrix diagonally dominant
-			A[i] = A[i];
+			A[i] = A[i]+Ni;
 			d=d+1;
 		
 		}
