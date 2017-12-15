@@ -178,7 +178,7 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 	*call_help = 1;
 	
 	//=====USER CODE before calling help GOES HERE==========
-	sleep(.01);
+	sleep(.2);
 
 
 	for(j = 0; j < numReads; j++){
@@ -200,7 +200,7 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 	*request_done = 0;
 	if(j > 0)  //skip the first call because its bad fro some reason
 		sum_times = sum_times+sval;
-	sleep(.2);
+	sleep(.01);
 
 	}
 
