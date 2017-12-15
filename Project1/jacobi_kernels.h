@@ -50,8 +50,8 @@
 #include "main_fcn.h"
 
 //global variables
-const int Ni = 1024;
-const int Nj = 1024;
+const int Ni = 64;
+const int Nj = 64;
 const int numElems =Ni*Nj;
 static int tileSize = Ni;
 static int iter = 100000;
