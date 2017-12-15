@@ -43,7 +43,7 @@ int main()
 
 	//pointer of helper function return
 	double* h_data;
-	double* monitor_data;
+	double* monitor_data;  //asdfasdf
 			
 	    // Allocate memory on the device
 	cudaMalloc((void **) &x_next_d, Ni*sizeof(double));
