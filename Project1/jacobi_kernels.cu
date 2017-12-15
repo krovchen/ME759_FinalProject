@@ -137,6 +137,8 @@ bool help_fcn(help_input_from_main help_input, double* out){
             else
                 jacobiOptimizedOnDevice <<< nTiles, tileSize >>> (x_next_d, A_d, x_now_d, b_d, Ni, Nj);
             //cudaMemcpy(x_now_d, x_next_d, sizeof(float)*Ni, cudaMemcpyDeviceToDevice);
+
+		sleep(.01);
         }
 	
 	cudaMemcpy(out, x_now_d, sizeof(double)*Ni, cudaMemcpyDeviceToHost);
