@@ -121,8 +121,14 @@ bool help_fcn(help_input_from_main help_input, double* out){
 	double *b_h = help_input.b_h;
 	double *A_h = help_input.A_h;	
 
-	cudaMemcpy(b_d, &b_h, sizeof(double)*Ni, cudaMemcpyHostToDevice);
-	cudaMemcpy(A_d, &A_h, sizeof(double)*numElems, cudaMemcpyHostToDevice);
+	cudaMemcpy(b_d, b_h, sizeof(double)*Ni, cudaMemcpyHostToDevice);
+	cudaMemcpy(A_d, A_h, sizeof(double)*numElems, cudaMemcpyHostToDevice);
+	for(k = 0; k < 5; k++){
+		cout << "copied from A: " << A_h[k] << endl;
+		cout << "copied from b: " << b_h[k] << endl;
+
+	}
+
         for (k=0; k<iter; k++)
         {
             if (k%2)
@@ -133,7 +139,7 @@ bool help_fcn(help_input_from_main help_input, double* out){
         }
 	
 	cudaMemcpy(out, x_now_d, sizeof(double)*Ni, cudaMemcpyDeviceToHost);
-	cout << "finished main" << endl;
+	cout << "finished copy" << endl;
 	for(k = 0; k < 5; k++)
 		cout << "Value copied over: "  << out[k] << endl;
 	cout << "exiting help" << endl;
