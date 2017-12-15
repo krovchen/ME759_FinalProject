@@ -103,6 +103,7 @@ __global__ void jacobiOptimizedOnDevice(double* x_next, double* A, double* x_now
         }*/
 
         x_next[idx] = (b[idx] - sigma) / A[idx_Ai + idx];
+	__syncthreads();
     }
 }
 
