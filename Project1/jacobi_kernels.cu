@@ -54,7 +54,7 @@ __global__ void jacobiOptimizedOnDevice(double* x_next, double* A, double* x_now
             sigma += A[idx*Nj + j] * x_now[j];
     }
     x_next[idx] = (b[idx] - sigma) / A[idx*Nj + idx];
-    }
+    
 }
 
 
