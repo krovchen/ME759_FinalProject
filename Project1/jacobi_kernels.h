@@ -54,8 +54,8 @@ const int Ni = 1024;
 const int Nj = 1024;
 const int numElems =Ni*Nj;
 static int tileSize = 64;
-static int iter = 1000000;
-static int els_to_read = 1024;
+static int iter = 100000;
+static int els_to_read = 64;
 
 struct help_input_from_main{
 	
