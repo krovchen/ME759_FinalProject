@@ -104,6 +104,7 @@ __global__ void jacobiOptimizedOnDevice(double* x_next, double* A, double* x_now
 
         x_next[idx] = (b[idx] - sigma) / A[idx_Ai + idx];
     }
+
     
 }
 
@@ -181,8 +182,8 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 	*call_help = 1;
 	
 	//=====USER CODE before calling help GOES HERE==========
-	while(CF.kernel_rdy_cmd == 0)
-		sleep(.1);
+	
+	sleep(.5);
 
 
 	for(j = 0; j < numReads; j++){
