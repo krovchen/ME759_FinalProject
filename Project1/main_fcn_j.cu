@@ -92,7 +92,7 @@ int main()
 			while(CF.main_done_cmd == 0){
 				if(CF.help_running_cmd == 1 && CF.request_val_cmd == 1){	
 					cout <<"Launching Monitor Kernel" << endl;
-					//cudaStreamSynchronize(stream1);
+					cudaStreamSynchronize(stream1);
 					monitorKernel<<<numBlocks, numThreads,0, stream1>>>(monitor_data, test_input.x_now_d);
 					cout <<"Launching Async Mem Cpy" << endl;
 					cudaMemcpyAsync(h_data, monitor_data, Ni*sizeof(double), cudaMemcpyDeviceToHost, stream1);
@@ -100,8 +100,7 @@ int main()
 					CF.request_val_cmd = 0;
 					for(i = 0; i < Ni; i++){
 						out[i] = h_data[i];
-						if(i < 3)
-						cout << "value copied in monitor kernel: " << h_data[i] << endl;
+
 					}
 					CF.req_delivered_cmd = 1;
 				}	
