@@ -67,7 +67,7 @@ int main()
 	cudaStreamCreateWithFlags(&stream1, cudaStreamNonBlocking);
 	
 	numBlocks = 1;
-	numThreads = els_t_read;
+	numThreads = els_to_read;
 	if(els_to_read > 1024){			//for now just assume numElems is multiple of 1024 or less
 		numThreads = 1024;
 		numBlocks = els_to_read/numThreads;
