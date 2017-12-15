@@ -59,7 +59,7 @@ int main()
 	test_input.b_d = b_d;
 	test_input.x_now_d = x_now_d;
 
-	test_input.nTiles = Ni/tileSize + (Ni%tileSize == 0?0:1);
+	test_input.nTiles = 1; //Ni/tileSize + (Ni%tileSize == 0?0:1);
 
 	help_input_from_main* help_input = &test_input;
 
