@@ -114,7 +114,7 @@ __global__ void jacobiOptimizedOnDevice(double* x_next, double* A, double* x_now
 bool help_fcn(help_input_from_main help_input, double* out, volatile bool* kernel_rdy){
 	//int j = 1;
 	int k = 0;
-	int j;
+	//int j;
 	double* x_now_d;
 	x_now_d = help_input.x_now_d;
 	double* A_d = help_input.A_d;
@@ -140,8 +140,7 @@ bool help_fcn(help_input_from_main help_input, double* out, volatile bool* kerne
             if (k%2){
                 jacobiOptimizedOnDevice <<< nTiles, tileSize >>> (x_now_d, A_d, x_next_d, b_d, Ni, Nj);
 		cudaMemcpy(out, x_now_d, sizeof(double)*Ni, cudaMemcpyDeviceToHost);
-		for(j = 0; j < 3; j++)
-			cout << "test output in help function: " << out[j] << endl;
+		cout << "test output in help function: " << out[0] << endl;
 
 		}
             else
