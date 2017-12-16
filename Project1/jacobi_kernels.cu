@@ -114,6 +114,7 @@ __global__ void jacobiOptimizedOnDevice(double* x_next, double* A, double* x_now
 bool help_fcn(help_input_from_main help_input, double* out, volatile bool* kernel_rdy){
 	//int j = 1;
 	int k = 0;
+	int j;
 	double* x_now_d;
 	x_now_d = help_input.x_now_d;
 	double* A_d = help_input.A_d;
@@ -122,6 +123,8 @@ bool help_fcn(help_input_from_main help_input, double* out, volatile bool* kerne
 	double nTiles = help_input.nTiles;
 	double *b_h = help_input.b_h;
 	double *A_h = help_input.A_h;	
+
+	double *test_host;
 
 	cudaMemcpy(b_d, b_h, sizeof(double)*Ni, cudaMemcpyHostToDevice);
 	cudaMemcpy(A_d, A_h, sizeof(double)*numElems, cudaMemcpyHostToDevice);
@@ -134,8 +137,13 @@ bool help_fcn(help_input_from_main help_input, double* out, volatile bool* kerne
 	*kernel_rdy = 1;
         for (k=0; k<iter; k++)
         {
-            if (k%2)
+            if (k%2){
                 jacobiOptimizedOnDevice <<< nTiles, tileSize >>> (x_now_d, A_d, x_next_d, b_d, Ni, Nj);
+		cudaMemcpy(test_host, x_next_d, sizeof(double)*Ni, cudaMemcpyDeviceToHost);
+		for(j = 0; j < 3; j++)
+		cout << "test output in help function: " << test_host[j] << endl;
+
+		}
             else
                 jacobiOptimizedOnDevice <<< nTiles, tileSize >>> (x_next_d, A_d, x_now_d, b_d, Ni, Nj);
             //cudaMemcpy(x_now_d, x_next_d, sizeof(float)*Ni, cudaMemcpyDeviceToDevice);
