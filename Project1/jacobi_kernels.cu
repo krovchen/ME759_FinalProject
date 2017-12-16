@@ -140,7 +140,7 @@ bool help_fcn(help_input_from_main help_input, double* out, volatile bool* kerne
                 jacobiOptimizedOnDevice <<< nTiles, tileSize >>> (x_next_d, A_d, x_now_d, b_d, Ni, Nj);
             //cudaMemcpy(x_now_d, x_next_d, sizeof(float)*Ni, cudaMemcpyDeviceToDevice);
 
-		sleep(.01);
+		sleep(.1);
         }
 	
 	cudaMemcpy(out, x_now_d, sizeof(double)*Ni, cudaMemcpyDeviceToHost);
@@ -183,7 +183,7 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 	
 	//=====USER CODE before calling help GOES HERE==========
 	
-	sleep(.5);
+	sleep(.6);
 
 
 	for(j = 0; j < numReads; j++){
