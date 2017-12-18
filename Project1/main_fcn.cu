@@ -81,7 +81,7 @@ int main()
 					cout <<"Launching Helper Kernel" << endl;
 					//*help_rdy =  help_fcn(*help_input, out);
 			
-					dataKernel<<<numBlocks,numThreads>>>(dArray, 1000);
+					dataKernel<<<numBlocks,numThreads>>>(dArray, 1000000);
 				}
 				if(CF.help_running_cmd == 1 && allow_interrupt == 0 && CF.request_val_cmd == 1){	
 					cout <<"Launching Monitor Kernel" << endl;

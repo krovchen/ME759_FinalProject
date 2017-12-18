@@ -34,7 +34,7 @@ __global__ void dataKernel( double* data, int nsteps){
 	clock_t now;
 
 	while(i < nsteps){
-		data[thid] = data[thid]+.1*thid;
+		data[thid] = data[thid]+.00001*thid;
 		i=i+1;
 	
 
