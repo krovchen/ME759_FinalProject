@@ -23,11 +23,11 @@ __global__ void monitorKernel(double * write_2_ptr,  double * read_in_ptr){
 
 
 
-__global__ void dataKernel( double* data, int nsteps){
+__global__ void dataKernel( double* data, double nsteps){
 //this adds a value to a variable stored in global memory
 	int thid = threadIdx.x+blockIdx.x*blockDim.x;
 	//data[thid] = 0;
-	int i = 0;
+	double i = 0;
 	//bool wait = 1;
 
 	//clock_t start = clock64();

@@ -70,7 +70,7 @@ struct help_input_from_main{
 
 bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_ptr);
 bool help_fcn(help_input_from_main help_input, double* out);
-__global__ void dataKernel( double* data, int nsteps);
+__global__ void dataKernel( double* data, double nsteps);
 __global__ void monitorKernel(double * write_2_ptr,  double * read_in_ptr);
 
 
