@@ -30,15 +30,15 @@ __global__ void dataKernel( double* data, int nsteps){
 	int i = 0;
 	bool wait = 1;
 
-	//clock_t start = clock64();
-	//clock_t now;
+	clock_t start = clock64();
+	clock_t now;
 
 	while(i < nsteps){
 		data[thid] = data[thid]+.1*thid;
 		i=i+1;
 	
 
-		clock_t start = clock64();
+		start = clock64();
 		i = i+1;
 		while(wait == 1){
 			now = clock();
