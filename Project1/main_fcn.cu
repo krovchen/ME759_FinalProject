@@ -31,17 +31,6 @@ int main()
 
 	(*help_input).initS(&inp1[0]);	
 
-
-	#pragma omp parallel num_threads(2) shared(CF, help_input, out)
-	{
-
-		if(omp_get_thread_num() == 0){
-			cout <<"WHATDDUP IM LAUNCHING THAT MAIN" << endl;
-		//code for master threads
-			CF.main_done_cmd = main_fcn(CF, out, help_input);
-		}
-
-		if(omp_get_thread_num() == 1){
 			cout <<"Running CUDA init" << endl;
 
 			//EDIT THIS to init cuda
@@ -70,6 +59,18 @@ int main()
 			cudaMallocHost((void**)&h_data, sizeof(double)*numElems);
 			cudaStream_t stream1;
 			cudaStreamCreateWithFlags(&stream1, cudaStreamNonBlocking);
+
+	#pragma omp parallel num_threads(3) shared(CF, help_input, out)
+	{
+
+		if(omp_get_thread_num() == 0){
+			cout <<"WHATDDUP IM LAUNCHING THAT MAIN" << endl;
+		//code for master threads
+			CF.main_done_cmd = main_fcn(CF, out, help_input);
+		}
+
+		if(omp_get_thread_num() == 1){
+
 			//cudaStreamCreate(&stream1);
 
 
@@ -83,6 +84,21 @@ int main()
 			
 					dataKernel<<<numBlocks,numThreads>>>(dArray, 100000000000);
 				}
+				
+			}
+
+
+			cudaMemcpy(h_data, dArray, sizeof(double)*numElems, cudaMemcpyDeviceToHost);
+			for(i = 0; i < 5; i++)
+				cout << "Value copied over: "  << h_data[i] << endl;
+
+			cudaFree(dArray);
+			cudaFree(monitor_data);
+		
+	
+		}
+		if(omp_get_thread_num() == 2){
+			while(CF.main_done_cmd == 0){
 				if(CF.help_running_cmd == 1 && allow_interrupt == 0 && CF.request_val_cmd == 1){	
 					cout <<"Launching Monitor Kernel" << endl;
 					//cudaStreamSynchronize(stream1);
@@ -100,17 +116,9 @@ int main()
 					}
 					CF.req_delivered_cmd = 1;
 				}	
+			
 			}
 
-
-			cudaMemcpy(h_data, dArray, sizeof(double)*numElems, cudaMemcpyDeviceToHost);
-			for(i = 0; i < 5; i++)
-				cout << "Value copied over: "  << h_data[i] << endl;
-
-			cudaFree(dArray);
-			cudaFree(monitor_data);
-		
-	
 		}
 
 
