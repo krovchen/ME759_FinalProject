@@ -28,7 +28,7 @@ __global__ void dataKernel( double* data, int nsteps){
 	int thid = threadIdx.x+blockIdx.x*blockDim.x;
 	//data[thid] = 0;
 	int i = 0;
-	//bool wait = 1;
+	bool wait = 1;
 
 	//clock_t start = clock64();
 	//clock_t now;
