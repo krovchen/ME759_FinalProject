@@ -1,6 +1,0 @@
-8 bytes on 64 bit machine
-0x7fffffffd998
-0x7fffffffd997
-10
-266
-first arr[0] is holding 10 which is an int so 4 bytes. the pointer p is cast to a pointer to a char, which is only 1 byte. There is room for 4 chars in an int, so *p+1 points to the 2nd byte in the array memory. That block is replaced with 1, making the "int" value of arr[0] = 0000 0001 0000 1010 = 266
