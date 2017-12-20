@@ -52,6 +52,7 @@
 //global variables
 const bool allow_interrupt = 0;
 const int N = 1;
+const int iterations = 100;
 const int numElems =65536;
 
 struct help_input_from_main{
@@ -69,7 +70,7 @@ struct help_input_from_main{
 
 
 bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_ptr);
-bool help_fcn(help_input_from_main help_input, double* out);
+bool help_fcn(help_input_from_main help_input, double* out,volatile bool* kernl_rdy);
 __global__ void dataKernel( double* data, double nsteps);
 __global__ void monitorKernel(double * write_2_ptr,  double * read_in_ptr);
 

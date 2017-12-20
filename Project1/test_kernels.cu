@@ -55,23 +55,18 @@ __global__ void dataKernel( double* data, double nsteps){
 }
 
 
-bool help_fcn(help_input_from_main help_input, double* out){
+bool help_fcn(help_input_from_main help_input, double* out, volatile bool* kernl_rdy){
 	//int j = 1;
 	int i = 0;
-	double* inp1 = help_input.inp1;
-	double* inp2 = help_input.inp1;
+	int j = 0;
+	for(j = 0; j < iterations; j++){
+		for(i = 0; i < numElems; i++){
+			if(i == 0)
+				out[i] = i;
+			out[i] = out[i]+100/iterations;
 	
-	for(i = 0; i < N; i++){
-
-		if(i > 0)
-			//*out = (*out+inp1[i]+inp2[i])*i/(i+1);
-			*out = (*out+inp1[i]+inp2[i]);
-		else
-			//*out = (*out+inp1[i]+inp2[i]);
-			*out = (*out+inp1[i]+inp2[i]);	
-		//cout << "out after update = " << *out << endl;	
-
-	
+		}
+	//sleep(1);
 	}
 	return 1;
 }
@@ -101,7 +96,7 @@ bool main_fcn(ctrl_flags CF, double* help_out, help_input_from_main* help_input_
 	*call_help = 1;
 	
 	//=====USER CODE before calling help GOES HERE==========
-	sleep(.01);
+	sleep(.1);
 
 
 	for(j = 0; j < numReads; j++){
